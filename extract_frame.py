@@ -4,6 +4,7 @@ import cv2
 def extractImages(pathIn, pathOut):
     for root, dirs, files in os.walk(pathIn, topdown=False):
         for name in files:
+            a=123
             video_path = os.path.join(root, name)
 #            count = 0
             n = 1
