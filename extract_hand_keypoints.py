@@ -78,4 +78,9 @@ def extract_hand_keypoints(path_input,path_output):
     print(not_recognized)
 
 if __name__=="__main__":
-    extract_hand_keypoints(path_input= "ss",path_output="asa")
+    a = argparse.ArgumentParser()
+    a.add_argument("--pathIn", help="path to the folder that contains the frames")
+    a.add_argument("--pathOut", help="path to the files where you'd like to save the data")
+    args = a.parse_args()
+    print(args)
+    extractImages(args.pathIn, args.pathOut)

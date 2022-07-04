@@ -4,7 +4,7 @@ import os
 
 
 #Pose
-def extract_pose_keypoints(path_dataset, path_frames):
+def extract_pose_keypoints(path_frames,path_dataset):
     mpPose = mp.solutions.pose
     pose = mpPose.Pose()
     mpDraw = mp.solutions.drawing_utils
@@ -56,4 +56,9 @@ def extract_pose_keypoints(path_dataset, path_frames):
     f.close()
 
 if __name__=="__main__":
-    extract_pose_keypoints(path_dataset="D:\\LST\\第二学期\\Sign_Language_Recognition_and_Translation\\lsa64_cut_keypoints.txt",path_frames="D:\\lsa64_cut_frames" )
+    a = argparse.ArgumentParser()
+    a.add_argument("--pathIn", help="path to the folder that contains the frames")
+    a.add_argument("--pathOut", help="path to the files where you'd like to save the data")
+    args = a.parse_args()
+    print(args)
+    extractImages(args.pathIn,args.pathOut)
