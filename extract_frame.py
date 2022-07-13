@@ -19,7 +19,7 @@ def extractImages(pathIn, pathOut):
                     name = name.replace(".mp4","")
                     filename = "{filename}_{num}.jpg".format(filename=name, num=n)
                     cv2.imwrite(filename, image)
-                    count = count + 0.2
+                    count = count + 0.1
                     n+=1
 
 if __name__=="__main__":
