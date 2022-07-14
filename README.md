@@ -4,7 +4,7 @@
 Please download the dataset [here](https://drive.google.com/file/d/1C7k_m2m4n5VzI4lljMoezc-uowDEgIUh/view)
 
 ## Construct enviroment using Conda
-'. .bashrc
+'. .bashrc'
 conda env create -f env.yml
 conda activate slr'
 
