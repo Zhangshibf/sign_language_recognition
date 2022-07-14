@@ -1,7 +1,7 @@
 import mediapipe as mp
 import cv2
 import os
-
+import argparse
 
 #Pose
 def extract_pose_keypoints(path_frames,path_dataset):
