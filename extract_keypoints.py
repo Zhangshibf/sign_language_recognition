@@ -61,4 +61,4 @@ if __name__=="__main__":
     a.add_argument("--pathOut", help="path to the files where you'd like to save the data")
     args = a.parse_args()
     print(args)
-    extractImages(args.pathIn,args.pathOut)
+    extract_pose_keypoints(args.pathIn,args.pathOut)
