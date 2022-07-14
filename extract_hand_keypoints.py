@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import os
+import argparse
 
 def extract_hand_keypoints(path_input,path_output):
     #write head of the dataset
