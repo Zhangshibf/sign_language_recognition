@@ -14,8 +14,10 @@ Please download the dataset [here](https://drive.google.com/file/d/1C7k_m2m4n5Vz
 `python cut_frames.py --pathIn=the path of the directory that contains videos --pathOut=the path of the directory where you would like to save the frames`
 
 ## Extract body keypoints from frames
+`python extract_body_keypoints.py --pathIn=path to the folder that contains the frames --pathOut=path to the files where you'd like to save the extracted keypoint data`
 
 ## Extract hand keypoints from frames
+`python extract_hand_keypoints.py --pathIn=path to the folder that contains the frames --pathOut=path to the files where you'd like to save the extracted keypoint data`
 
 ## Train the model
 
