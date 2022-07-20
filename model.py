@@ -12,17 +12,6 @@ from sklearn.preprocessing import StandardScaler
 def load_data(pathH,pathB):
     hand = pd.read_csv(pathH,sep=",") #each frame correspond to a 64-dimensional vector
     body = pd.read_csv(pathB,sep=",").iloc[:,45:69] #delete keypoints related to face and hand. Each frame correspond to a 24-dimensional vector
-    hand_idx = list(hand.iloc[:, 0])
-    body_idx = list(body.iloc[:, 0])
-
-    #create targets
-    hand_y = list()
-    for i in hand_idx:
-        hand_y.append(int(i[:3]))
-
-    body_y = list()
-    for i in body_idx:
-        body_y.append(int(i[:3]))
 
     #normalization
     pca = PCA(n_components=24)
@@ -30,7 +19,19 @@ def load_data(pathH,pathB):
     hand_24 = pca.fit_transform(hand_standard)
     body_24 = StandardScaler().fit_transform(body)
 
+    #split hand data and body data into train, dev, and test
+    #I want to use videos of subject 7 as dev set and 8 as test set.
+    body_dev = get_rows(body_24, "_007_")
+    hand_dev = get_rows(hand_24, "_007_")
+    body_test = get_rows(body_24, "_008_")
+    hand_test = get_rows(hand_24, "_008_")
+
+    hand_train = does_not_contains(hand_24, "_007_|_008_")
+    body_train = does_not_contains(body_24, "_008_|_007_")
+
     #create dataloader
+    #9 dataloaders in total: hand_train_loader, hand_dev_loader, hand_test_loader, body_train_loader, body_dev_loader,body_test_loader,hb_train_loader,hb_dev_loader,hb_test_loader.
+
 
 
 
@@ -109,3 +110,7 @@ def evaluate_model(model, dev_data, loss_function):
         loss = epoch_loss / data_num
         print(f"The averaged loss is {loss}")
         print(f"The averaged accuracy is {accuracy}")
+
+
+def cross_val():
+    pass
