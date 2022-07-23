@@ -12,6 +12,7 @@ def load_data(pathH,pathB):
     hand_24 = pca.fit_transform(hand_standard)
     hand_24_pd = pd.DataFrame(hand_24)
     hand_24_pd["index"] = hand.iloc[:, 0]
+    hand_mean = list(hand_24_pd.mean(axis=0))
 
     body = pd.read_csv(pathB, sep=",")
     upper_body = body.iloc[:,
@@ -36,17 +37,21 @@ def load_data(pathH,pathB):
     d                w4+v4
     e                w5+v5
     """
+    dataset = list()
     blank_row = [0] * 24
     body_idx = list(hand_24_pd["index"])
     hand_idx = list(hand_24_pd["index"])
     for b_idx in body_idx:
         row = list()
+        row.extend(b_idx)
         if b_idx in hand_idx:
             row.extend(body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
             row.extend(hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
+            dataset.append(row)
         else:
             row.extend(body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
-            row.extend(blank_row)
+            row.extend(hand_mean)
+            dataset.append(row)
 
 
 
