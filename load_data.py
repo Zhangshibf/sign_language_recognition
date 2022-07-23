@@ -1,7 +1,7 @@
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
-
+import os
 def load_data(pathH,pathB):
     hand = pd.read_csv(pathH,sep=",") #each frame correspond to a 64-dimensional vector
     body = pd.read_csv(pathB,sep=",").iloc[:,45:69] #delete keypoints related to face and hand. Each frame correspond to a 24-dimensional vector
@@ -13,7 +13,10 @@ def load_data(pathH,pathB):
     hand_24_pd = pd.DataFrame(hand_24)
     hand_24_pd["index"] = hand.iloc[:, 0]
 
-    body_24 = StandardScaler().fit_transform(body.iloc[:, 1:])
+    body = pd.read_csv(pathB, sep=",")
+    upper_body = body.iloc[:,
+                 45:69]  # delete keypoints related to face and hand. Each frame correspond to a 24-dimensional vector
+    body_24 = StandardScaler().fit_transform(upper_body)
     body_24_pd = pd.DataFrame(body_24)
     body_24_pd["index"] = body.iloc[:, 0]
 
@@ -33,15 +36,25 @@ def load_data(pathH,pathB):
     d                w4+v4
     e                w5+v5
     """
+    blank_row = [0] * 24
+    body_idx = list(hand_24_pd["index"])
+    hand_idx = list(hand_24_pd["index"])
+    for b_idx in body_idx:
+        row = list()
+        if b_idx in hand_idx:
+            row.extend(body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
+            row.extend(hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
+        else:
+            row.extend(body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
+            row.extend(blank_row)
 
 
 
-    #split hand data and body data into train, dev, and test
-    #I want to use videos of subject 7 as dev set and 8 as test set.
+#split hand data and body data into train, dev, and test
+#I want to use videos of subject 7 as dev set and 8 as test set.
     body_train = does_not_contains(body_24, "_008_|_007_")
     body_dev = get_rows(body_24, "_007_")
     body_test = get_rows(body_24, "_008_")
-
 
     hand_train = does_not_contains(hand_24, "_007_|_008_")
     hand_dev = get_rows(hand_24, "_007_")
