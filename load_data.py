@@ -1,8 +1,9 @@
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
-import os
-def load_data(pathH,pathB):
+import argparse
+
+def normalize_dataset(pathH,pathB,path_dataset):
     hand = pd.read_csv(pathH,sep=",") #each frame correspond to a 64-dimensional vector
     body = pd.read_csv(pathB,sep=",").iloc[:,45:69] #delete keypoints related to face and hand. Each frame correspond to a 24-dimensional vector
 
@@ -27,15 +28,7 @@ def load_data(pathH,pathB):
     Say that we have 5 frames for one video, namely a, b, c, d, e
     body keypoint vectors, w1, w2, w3, w4, w5
     only 2 hand keypoint vectors v2,v4
-    v1, v3 and v5 are estimate in different ways, v1 = v2, v3 = (v2+v4)/2, v5=v4
-    Now we concatenate each wn with each vn. Our final dataset looks like this:
-    
-    frame_index     features
-    a                w1+v1
-    b                w2+v2
-    c                w3+v3
-    d                w4+v4
-    e                w5+v5
+    v1, v3 and v5 are going to be the averaged values of hand df
     """
     dataset = list()
     blank_row = [0] * 24
@@ -53,17 +46,31 @@ def load_data(pathH,pathB):
             row.extend(hand_mean)
             dataset.append(row)
 
+    #and now the dataset is ready!
+    f = open(path_dataset, "a", encoding="utf-8")
+    for row in dataset:
+        line = ",".join(row)
+        f.write(line)
+    f.close()
 
+if __name__=="__main__":
+    a = argparse.ArgumentParser()
+    a.add_argument("--pathH", help="path to the folder that contains the frames")
+    a.add_argument("--pathB", help="path to the files where you'd like to save the data")
+    a.add_argument("--path_datasetB", help="path to the files where you'd like to save the data")
+    args = a.parse_args()
+    print(args)
+    normalize_dataset(args.pathH,args.pathB,args.path_dataset)
 
 #split hand data and body data into train, dev, and test
 #I want to use videos of subject 7 as dev set and 8 as test set.
-    body_train = does_not_contains(body_24, "_008_|_007_")
-    body_dev = get_rows(body_24, "_007_")
-    body_test = get_rows(body_24, "_008_")
+#    body_train = does_not_contains(body_24, "_008_|_007_")
+#    body_dev = get_rows(body_24, "_007_")
+#    body_test = get_rows(body_24, "_008_")
 
-    hand_train = does_not_contains(hand_24, "_007_|_008_")
-    hand_dev = get_rows(hand_24, "_007_")
-    hand_test = get_rows(hand_24, "_008_")
+#    hand_train = does_not_contains(hand_24, "_007_|_008_")
+#    hand_dev = get_rows(hand_24, "_007_")
+#    hand_test = get_rows(hand_24, "_008_")
 
 
 
