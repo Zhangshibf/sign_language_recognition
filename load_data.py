@@ -14,7 +14,7 @@ def normalize_dataset(pathH,pathB,path_dataset):
     hand_24_pd = pd.DataFrame(hand_24)
     hand_24_pd["index"] = hand.iloc[:, 0]
     hand_mean = list(hand_24_pd.mean(axis=0))
-
+    hand_mean_str = [str(i) for i in hand_mean]
     body = pd.read_csv(pathB, sep=",")
     upper_body = body.iloc[:,
                  45:69]  # delete keypoints related to face and hand. Each frame correspond to a 24-dimensional vector
@@ -36,14 +36,14 @@ def normalize_dataset(pathH,pathB,path_dataset):
     hand_idx = list(hand_24_pd["index"])
     for b_idx in body_idx:
         row = list()
-        row.extend(b_idx)
+        row.append(b_idx)
         if b_idx in hand_idx:
-            row.extend(body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
-            row.extend(hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
+            row.extend([str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+            row.extend([str(i) for i in hand_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
             dataset.append(row)
         else:
-            row.extend(body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1])
-            row.extend(hand_mean)
+            row.extend([str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+            row.extend(hand_mean_str)
             dataset.append(row)
 
     #and now the dataset is ready!
