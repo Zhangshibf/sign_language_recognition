@@ -31,7 +31,7 @@ def normalize_dataset(pathH,pathB,path_dataset):
     v1, v3 and v5 are going to be the averaged values of hand df
     """
     dataset = list()
-    body_idx = list(hand_24_pd["index"])
+    body_idx = list(body_24_pd["index"])
     hand_idx = list(hand_24_pd["index"])
     for b_idx in body_idx:
         row = list()
