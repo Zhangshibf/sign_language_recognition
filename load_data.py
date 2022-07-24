@@ -57,7 +57,7 @@ if __name__=="__main__":
     a = argparse.ArgumentParser()
     a.add_argument("--pathH", help="path to the folder that contains the frames")
     a.add_argument("--pathB", help="path to the files where you'd like to save the data")
-    a.add_argument("--path_datasetB", help="path to the files where you'd like to save the data")
+    a.add_argument("--path_dataset", help="path to the files where you'd like to save the data")
     args = a.parse_args()
     print(args)
     normalize_dataset(args.pathH,args.pathB,args.path_dataset)
