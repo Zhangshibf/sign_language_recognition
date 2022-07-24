@@ -4,36 +4,43 @@ import torch.nn as nn
 from torch.nn import functional
 from torch.nn import Module
 import torch.optim as optim
+from torch.utils.data import DataLoader,Dataset
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+class Dataset():
 
-def load_data(pathH,pathB):
-    hand = pd.read_csv(pathH,sep=",") #each frame correspond to a 64-dimensional vector
-    body = pd.read_csv(pathB,sep=",").iloc[:,45:69] #delete keypoints related to face and hand. Each frame correspond to a 24-dimensional vector
+    def __init__(self,path_dataset):
+        f = open(path_dataset)
+        data = f.read()
+        rows = data.split("\n")
+        idxs = list()
+        features = list()
+        for row in rows:
+            row_data = row.split(",")
+            idxs.append(row_data[0])
+            features.append(row_data[1:])
 
-    #normalization
-    pca = PCA(n_components=24)
-    hand_standard = StandardScaler().fit_transform(hand.iloc[:, 1:])
-    hand_24 = pca.fit_transform(hand_standard)
-    body_24 = StandardScaler().fit_transform(body)
-
-    #split hand data and body data into train, dev, and test
-    #I want to use videos of subject 7 as dev set and 8 as test set.
-    body_dev = get_rows(body_24, "_007_")
-    hand_dev = get_rows(hand_24, "_007_")
-    body_test = get_rows(body_24, "_008_")
-    hand_test = get_rows(hand_24, "_008_")
-
-    hand_train = does_not_contains(hand_24, "_007_|_008_")
-    body_train = does_not_contains(body_24, "_008_|_007_")
-
-    #create dataloader
-    #9 dataloaders in total: hand_train_loader, hand_dev_loader, hand_test_loader, body_train_loader, body_dev_loader,body_test_loader,hb_train_loader,hb_dev_loader,hb_test_loader.
+        #each row corresponds to a frame. Now let's group all frame data of one video together. Each video should have only one label
+        #047_001_001_18.jpg
 
 
+        idx = list()
+        for
+        self.labels =
+        self.instances =
 
+    def __len__(self):
+        return len(self.labels)
+
+
+    def __getitem__(self, item):
+        label = self.labels[idx]
+        instance = self.instances[idx]
+        sample = {"Data": instance, "Class": label}
+
+        return sample
 
 
 class sign_translator(nn.Module):
