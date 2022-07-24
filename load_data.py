@@ -3,9 +3,9 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import argparse
 
+
 def normalize_dataset(pathH,pathB,path_dataset):
     hand = pd.read_csv(pathH,sep=",") #each frame correspond to a 64-dimensional vector
-    body = pd.read_csv(pathB,sep=",").iloc[:,45:69] #delete keypoints related to face and hand. Each frame correspond to a 24-dimensional vector
 
     #normalization
     pca = PCA(n_components=24)
@@ -31,7 +31,6 @@ def normalize_dataset(pathH,pathB,path_dataset):
     v1, v3 and v5 are going to be the averaged values of hand df
     """
     dataset = list()
-    blank_row = [0] * 24
     body_idx = list(hand_24_pd["index"])
     hand_idx = list(hand_24_pd["index"])
     for b_idx in body_idx:
@@ -50,7 +49,8 @@ def normalize_dataset(pathH,pathB,path_dataset):
     f = open(path_dataset, "a", encoding="utf-8")
     for row in dataset:
         line = ",".join(row)
-        f.write(line)
+        line_n = line+"\n"
+        f.write(line_n)
     f.close()
 
 if __name__=="__main__":
@@ -61,16 +61,6 @@ if __name__=="__main__":
     args = a.parse_args()
     print(args)
     normalize_dataset(args.pathH,args.pathB,args.path_dataset)
-
-#split hand data and body data into train, dev, and test
-#I want to use videos of subject 7 as dev set and 8 as test set.
-#    body_train = does_not_contains(body_24, "_008_|_007_")
-#    body_dev = get_rows(body_24, "_007_")
-#    body_test = get_rows(body_24, "_008_")
-
-#    hand_train = does_not_contains(hand_24, "_007_|_008_")
-#    hand_dev = get_rows(hand_24, "_007_")
-#    hand_test = get_rows(hand_24, "_008_")
 
 
 
