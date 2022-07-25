@@ -1,4 +1,4 @@
-# Sign Language Rcognition and Translation
+# Sign Language Recognition and Translation
 
 ## Dataset
 Please download the dataset [here](https://drive.google.com/file/d/1C7k_m2m4n5VzI4lljMoezc-uowDEgIUh/view)
@@ -20,7 +20,8 @@ Please download the dataset [here](https://drive.google.com/file/d/1C7k_m2m4n5Vz
 `python extract_hand_keypoints.py --pathIn=path to the folder that contains the frames --pathOut=path to the files where you'd like to save the extracted keypoint data`
 
 ##Create Dataset
-`python `
+`python load_data.py --pathH = path to the hand keypoints file --pathB = path to the body keypoints file --path_dataset = path to the file where you'd like to save the dataset`
+
 ## Train the model
 
 ## Test the model
