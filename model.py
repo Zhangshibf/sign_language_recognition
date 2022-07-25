@@ -1,3 +1,5 @@
+from collections import Counter
+
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -12,6 +14,8 @@ from sklearn.preprocessing import StandardScaler
 class Dataset():
 
     def __init__(self,path_dataset):
+        instances = list()
+        labels = list()
         f = open(path_dataset)
         data = f.read()
         rows = data.split("\n")
@@ -24,18 +28,28 @@ class Dataset():
 
         #each row corresponds to a frame. Now let's group all frame data of one video together. Each video should have only one label
         #047_001_001_18.jpg
+        videos = list(Counter([i[:11] for i in idxs]))
+        videos.sort()
+        video_instances = list()
+        for video_name in videos:
+            labels.append(video_name)
+            #find all frames of the same video, group them together. That's an instance
+            frame_names = [i for i in idxs if video_name in i]
+            frame_names.sort()#to make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
+            frame_idxs = [i for i, x in enumerate(idxs) if x in frame_names]
+            video_feature = list()
+            for frame_idx in frame_idxs:
+                video_feature.append(features[frame_idx])
+            instances.append(video_feature)
 
-
-        idx = list()
-        for
-        self.labels =
-        self.instances =
+        self.labels = labels
+        self.instances = instances
 
     def __len__(self):
         return len(self.labels)
 
 
-    def __getitem__(self, item):
+    def __getitem__(self, idx):
         label = self.labels[idx]
         instance = self.instances[idx]
         sample = {"Data": instance, "Class": label}
