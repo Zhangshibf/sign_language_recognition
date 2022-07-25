@@ -19,6 +19,8 @@ Please download the dataset [here](https://drive.google.com/file/d/1C7k_m2m4n5Vz
 ## Extract hand keypoints from frames
 `python extract_hand_keypoints.py --pathIn=path to the folder that contains the frames --pathOut=path to the files where you'd like to save the extracted keypoint data`
 
+##Create Dataset
+`python `
 ## Train the model
 
 ## Test the model
