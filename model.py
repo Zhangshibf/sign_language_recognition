@@ -61,7 +61,11 @@ class Dataset():
 
     def train_dev_set(self,dev):
         #dev is the ID of the signer to be used as dev set.
-
+        #还没写好
+        self.dev_x = dev_x
+        self.dev_y = dev_y
+        self.train_x = train_x
+        self.train_y = train_y
 
 def create_targets(df):
     idx = list(df.iloc[:, 0])
