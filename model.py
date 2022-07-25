@@ -1,5 +1,4 @@
 from collections import Counter
-
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -30,7 +29,6 @@ class Dataset():
         #047_001_001_18.jpg
         videos = list(Counter([i[:11] for i in idxs]))
         videos.sort()
-        video_instances = list()
         for video_name in videos:
             labels.append(video_name)
             #find all frames of the same video, group them together. That's an instance
@@ -56,20 +54,41 @@ class Dataset():
 
         return sample
 
+    def test_set(self):
+        #还没写好
+        self.test_y = y
+        self.test_x = x
+
+    def train_dev_set(self,dev):
+        #dev is the ID of the signer to be used as dev set.
+
+
+def create_targets(df):
+    idx = list(df.iloc[:, 0])
+    y = list()
+    for i in idx:
+        y.append(int(i[:3]))
+
+    return y
+
+
 
 class sign_translator(nn.Module):
 
-    def __init__(self, hidden_size, bidirectional=True, num_layers=1, dropout=0):
+    def __init__(self, hidden_size,output_size, bidirectional=True, num_layers=2, dropout=0.2):
+
         super(sign_translator, self).__init__()
-        self.layer1 = nn.LSTM(24, hidden_size, bidirectional=bidirectional, num_layers=num_layers,
-                              dropout=dropout)  # The LSTM layer
-        self.layer3 = nn.Softmax(hidden_size, 64)
+        self.layer1 = nn.LSTM(48,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
+        self.layer2 = nn.Linear(hidden_size*2 if bidirectional == True else hidden_size,output_size)  #The linear layer
+        self.layer3 = nn.Softmax(output_size,64)   #The output layer with softmax
 
     def forward(self, vectors):
         # reshape the input for LSTM layer. The size of the expected input is [sequence length x 1 x 24]
-        embedding_input = torch.reshape(vectors, [vectors.shape[0], 1, 24])
-        output_layer1, (hidden, cell) = self.layer1(vectors)
-        prediction = self.layer2(output_layer1)
+        video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])
+        output_layer1, (hidden, cell) = self.layer1(video_input )
+        output_layer2 = self.layer2(output_layer1)
+        prediction = self.layer3(output_layer2)
+
 
         return prediction
 
@@ -83,7 +102,7 @@ def train_model(model,train_data,optimizer,loss_function):
 
     for batch in train_data:
         optimizer.zero_grad()
-        train_x = batch[0][0]
+        train_x = batch[0][0]#这里要改
         train_y = batch[0][1]
         model_prediction = model(train_x)
         model_prediction = torch.reshape(model_prediction, [model_prediction.shape[0], model_prediction.shape[2]])
@@ -133,5 +152,12 @@ def evaluate_model(model, dev_data, loss_function):
         print(f"The averaged accuracy is {accuracy}")
 
 
-def cross_val():
-    pass
+def cross_val(pathDataset):
+    dataset = Dataset(pathDataset)
+    model = (hidden_size = 64,output_size=64)
+    for i in range(1,10):
+        dev_data = dataset.extract_signer(i)
+        train_data = dataset.exclude_signer([i,10])#signer 10 is for test set
+
+    train_model(model, train_data, optimizer, loss_function)
+    evaluate_model(model, dev_data, loss_function)
