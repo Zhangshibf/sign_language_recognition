@@ -67,17 +67,4 @@ if __name__=="__main__":
 
 
 
-def create_targets(df):
-    idx = list(df.iloc[:, 0])
-    y = list()
-    for i in idx:
-        y.append(int(i[:3]))
 
-    return y
-
-
-def get_rows(df,string):
-    return df[df.frame_name.str.contains(string,regex=False)]
-
-def does_not_contains(df,string):
-    return df[~df.frame_name.str.contains(string)]
