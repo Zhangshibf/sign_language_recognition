@@ -64,14 +64,14 @@ def extract_hand_keypoints(path_input,path_output):
                     for point in results.multi_hand_landmarks[0].landmark:
                         temporal.extend([str(point.x), str(point.y), str(point.z)])
                     temporal_joined = ",".join(temporal)
-                    line = str(name + "," + temporal_joined + "\n")
+                    line = str(name + "," + temporal_joined + "\n")#the name of first hand information is just the file name of frame
                     f.write(line)
 
                     temporal = []
                     for point in results.multi_hand_landmarks[1].landmark:
                         temporal.extend([str(point.x), str(point.y), str(point.z)])
                     temporal_joined = ",".join(temporal)
-                    line = str(name + "," + temporal_joined + "\n")
+                    line = str(name + "_" + "," + temporal_joined + "\n")#the name of second hand information is the file name of frame + "_"
                     f.write(line)
                 else:
                     not_recognized.append(name)
