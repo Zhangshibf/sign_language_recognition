@@ -10,9 +10,11 @@ import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+
+
 class Dataset():
 
-    def __init__(self,path_dataset):
+    def __init__(self, path_dataset):
         instances = list()
         labels = list()
         f = open(path_dataset)
@@ -25,27 +27,32 @@ class Dataset():
             idxs.append(row_data[0])
             features.append(row_data[1:])
 
-        #each row corresponds to a frame. Now let's group all frame data of one video together. Each video should have only one label
-        #047_001_001_18.jpg
+        # each row corresponds to a frame. Now we need to group all frame data of one video together. Each video should have only one label
+        # 047_001_001_18.jpg
         videos = list(Counter([i[:11] for i in idxs]))
         videos.sort()
+        videos = videos[1:]
+
         for video_name in videos:
             labels.append(video_name)
-            #find all frames of the same video, group them together. That's an instance
+            # find all frames of the same video, group them together. That's an instance
             frame_names = [i for i in idxs if video_name in i]
-            frame_names.sort()#to make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
+            frame_names.sort()  # to make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
             frame_idxs = [i for i, x in enumerate(idxs) if x in frame_names]
             video_feature = list()
             for frame_idx in frame_idxs:
                 video_feature.append(features[frame_idx])
             instances.append(video_feature)
 
-        self.labels = labels
+        targets = self.create_targets(labels)
+        signer = self.create_signer_list(labels)
+
+        self.signers = signer
+        self.labels = targets
         self.instances = instances
 
     def __len__(self):
         return len(self.labels)
-
 
     def __getitem__(self, idx):
         label = self.labels[idx]
@@ -54,26 +61,37 @@ class Dataset():
 
         return sample
 
-    def test_set(self):
-        #还没写好
-        self.test_y = y
-        self.test_x = x
+    def create_test_set(self):
+        # signer 10 is used as test set
+        idx_signer10 = [i for i, x in enumerate(self.signers) if x == 10]
+        self.test_x = [self.instances[idx] for idx in idx_signer10]
+        self.test_y = [self.labels[idx] for idx in idx_signer10]
 
-    def train_dev_set(self,dev):
-        #dev is the ID of the signer to be used as dev set.
-        #还没写好
-        self.dev_x = dev_x
-        self.dev_y = dev_y
-        self.train_x = train_x
-        self.train_y = train_y
+    def train_dev_split(self, dev):
+        # dev is the ID of the signer to be used as dev set.
+        idx_signer_dev = [i for i, x in enumerate(self.signers) if x == dev]
+        self.dev_x = [self.instances[idx] for idx in idx_signer_dev]
+        self.dev_y = [self.labels[idx] for idx in idx_signer_dev]
 
-def create_targets(df):
-    idx = list(df.iloc[:, 0])
-    y = list()
-    for i in idx:
-        y.append(int(i[:3]))
+        idx_signer_train = [i for i, x in enumerate(self.signers) if x not in [dev, 10]]
+        self.train_x = [self.instances[idx] for idx in idx_signer_train]
+        self.train_y = [self.labels[idx] for idx in idx_signer_train]
 
-    return y
+    def create_targets(self, idx):
+        y = list()
+        for i in idx:
+            video = i[:3]
+            video_int = int(video.lstrip("0"))
+            y.append(video_int)
+        return y
+
+    def create_signer_list(self, idx):
+        signers = list()
+        for i in idx:
+            signer = i[4:7]
+            signer_int = int(signer.lstrip("0"))
+            signers.append(signer_int)
+        return signers
 
 
 
@@ -97,17 +115,15 @@ class sign_translator(nn.Module):
         return prediction
 
 
-def train_model(model,train_data,optimizer,loss_function):
+def train_model(model,x,y,optimizer,loss_function):
     print("-------------------------------Training-------------------------------------------")
     model.train()
     epoch_loss = 0
     epoch_accuracy = 0
-    data_num = len(train_data)
+    data_num = len(x)
 
-    for batch in train_data:
+    for train_x,train_y in zip(x,y):
         optimizer.zero_grad()
-        train_x = batch[0][0]#这里要改
-        train_y = batch[0][1]
         model_prediction = model(train_x)
         model_prediction = torch.reshape(model_prediction, [model_prediction.shape[0], model_prediction.shape[2]])
         loss_per_batch = loss_function(model_prediction, train_y)
@@ -134,16 +150,14 @@ def calculate_accuracy_per_batch(prediction,y):
     return accuracy_per_batch
 
 
-def evaluate_model(model, dev_data, loss_function):
+def evaluate_model(model, x,y, loss_function):
     print("------------------------------------Evaluation---------------------------------------------")
     model.eval()
     epoch_loss = 0
     epoch_accuracy = 0
-    data_num = len(dev_data)
+    data_num = len(x)
     with torch.no_grad():
-        for batch in dev_data:
-            dev_x = batch[0][0]
-            dev_y = batch[0][1]
+        for dev_x,dev_y in zip(x,y):
             model_prediction = model(dev_x)
             model_prediction = torch.reshape(model_prediction, [model_prediction.shape[0], model_prediction.shape[2]])
             loss = loss_function(model_prediction, dev_y)
@@ -158,10 +172,12 @@ def evaluate_model(model, dev_data, loss_function):
 
 def cross_val(pathDataset):
     dataset = Dataset(pathDataset)
-    model = (hidden_size = 64,output_size=64)
+    dataset.create_test_set()
+    model = sign_translator(hidden_size = 64,output_size=64)
     for i in range(1,10):
-        dev_data = dataset.extract_signer(i)
-        train_data = dataset.exclude_signer([i,10])#signer 10 is for test set
+        dataset.train_dev_split(i)#i_th signer for dev set, 10th signer for test set, the rest for train set
+        train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function)
+        evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function)
 
-    train_model(model, train_data, optimizer, loss_function)
-    evaluate_model(model, dev_data, loss_function)
+    print("Final Evaluation")
+    evaluate_model(model, dataset.test_x,dataset.test_y, loss_function)
