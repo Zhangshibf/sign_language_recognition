@@ -72,7 +72,7 @@ def extract_hand_keypoints(path_input,path_output):
                         temporal.extend([str(point.x), str(point.y), str(point.z)])
                     temporal_joined = ",".join(temporal)
                     #decide whether to keep "_" in the line below or not
-                    line = str(name + "_" + "," + temporal_joined + "\n")#the name of second hand information is the file name of frame + "_"
+                    line = str(name + "," + temporal_joined + "\n")
                     f.write(line)
                 else:
                     not_recognized.append(name)
