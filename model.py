@@ -166,14 +166,17 @@ def evaluate_model(model, x,y, loss_function):
         print(f"The averaged accuracy is {accuracy}")
 
 
-def cross_val(pathDataset):
+def cross_val(pathDataset,lr= 0.0001):
     dataset = Dataset(pathDataset)
     dataset.create_test_set()
-    model = sign_translator(hidden_size = 64,output_size=64)
+    loss_function = nn.functional.cross_entropy
     for i in range(1,10):
+        print(f"--------------Batch {i}---------------")
+        model = sign_translator(hidden_size=64, output_size=64)
+        optimizer = optim.Adam(params=model.parameters(), lr=lr)
         dataset.train_dev_split(i)#i_th signer for dev set, 10th signer for test set, the rest for train set
         train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function)
         evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function)
 
-    print("Final Evaluation")
+    print("--------------Final Evaluation---------------")
     evaluate_model(model, dataset.test_x,dataset.test_y, loss_function)
