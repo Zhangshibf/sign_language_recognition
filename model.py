@@ -1,15 +1,10 @@
 from collections import Counter
-import pandas as pd
 import torch
 import torch.nn as nn
 from torch.nn import functional
 from torch.nn import Module
 import torch.optim as optim
 from torch.utils.data import DataLoader,Dataset
-import pandas as pd
-import numpy as np
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
 
 
 class Dataset():
@@ -76,6 +71,7 @@ class Dataset():
         idx_signer_train = [i for i, x in enumerate(self.signers) if x not in [dev, 10]]
         self.train_x = [self.instances[idx] for idx in idx_signer_train]
         self.train_y = [self.labels[idx] for idx in idx_signer_train]
+        #这里得加个shuffle
 
     def create_targets(self, idx):
         y = list()
