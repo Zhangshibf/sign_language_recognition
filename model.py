@@ -103,12 +103,8 @@ class sign_translator(nn.Module):
         video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])#这里要改
         output_layer1, (hidden, cell) = self.layer1(video_input )
         output_layer2 = self.layer2(output_layer1)
-        print("output_layer2")
-        print(output_layer2)
-        print(output_layer2.size())
         last_output = output_layer2[-1]
         print(last_output.size())
-        print(last_output)
         #we should take the last output of layer2.
         prediction = self.layer3(last_output)
         print(prediction)
@@ -123,14 +119,9 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
-
-        train_x_num = list()
-        for sublist in train_x:
-            sublist_num = [float(i) for i in sublist]#the length of each frame is not the same! Some frames' length is 24, not 48. There is something wrong
-            train_x_num.append(sublist_num)
-
-        train_x = torch.tensor(train_x_num)
+        train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
+        print(train_y)
         optimizer.zero_grad()
         model_prediction = model(train_x)
         #这里肯定要改
