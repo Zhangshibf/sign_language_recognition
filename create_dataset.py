@@ -72,11 +72,9 @@ def create_dataset(pathH,pathB,path_dataset):
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
 
                 h_vector = [i for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]]
-                print(h_vector)
-                row1.extend(h_vector[:24])
-                row2.extend(h_vector[25:])
-#                row1 = [float(i) for i in row1]
-#                row2 = [float(i) for i in row2]
+                row1.extend([float(i) for i in h_vector[:24]])
+                row2.extend([float(i) for i in h_vector[25:]])
+
                 if len(row1)==49 and len(row2)==49:
                     dataset.append(row1)
                     dataset.append(row2)
@@ -85,13 +83,15 @@ def create_dataset(pathH,pathB,path_dataset):
             else:
                 row1.extend(
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+                row1.extend(hand_mean)
                 if len(row1) == 49:
-                    row1.extend(hand_mean)
+                    dataset.append(row1)
+                    dataset.append(row1)
+
                 else:
                     print("something is wrong")
-#                row1 = [float(i) for i in row1]
-                dataset.append(row1)
-                dataset.append(row1)
+
+
 
     #and now the dataset is ready!
     f = open(path_dataset, "a", encoding="utf-8")
