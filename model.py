@@ -165,7 +165,7 @@ def evaluate_model(model, x,y, loss_function):
             dev_x_b = [i[:24] for i in dev_x]
 
 
-            dev_x = torch.tensor(dev_x_b)
+            dev_x_b = torch.tensor(dev_x_b)
             dev_y = torch.tensor(dev_y)
             dev_y = torch.reshape(dev_y, [1])
             model_prediction = model(dev_x_b)
