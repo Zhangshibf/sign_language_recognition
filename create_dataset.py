@@ -14,7 +14,7 @@ def create_dataset(pathH,pathB,path_dataset):
     hand_24_pd = pd.DataFrame(hand_24)
     hand_24_pd["index"] = hand.iloc[:, 0]
     hand_mean = list(hand_24_pd.mean(axis=0))
-    hand_mean_str = [str(i) for i in hand_mean]
+#    hand_mean_str = [str(i) for i in hand_mean]
     body = pd.read_csv(pathB, sep=",")
     upper_body = body.iloc[:,
                  45:69]  # delete keypoints related to face and hand. Each frame correspond to a 24-dimensional vector
@@ -43,14 +43,19 @@ def create_dataset(pathH,pathB,path_dataset):
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(
                     [float(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
-                dataset.append(row)
+                if len(row)==49:
+                    dataset.append(row)
+                else:
+                    print("no")
 
             else:
                 row.extend(
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
-                row.extend(hand_mean_str)
-
-                dataset.append(row)
+                row.extend(hand_mean)
+                if len(row)==49:
+                    dataset.append(row)
+                else:
+                    print("nono")
 
 
         elif b_idx[:3] in idx_both:
@@ -66,17 +71,23 @@ def create_dataset(pathH,pathB,path_dataset):
                 row2.extend(
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
 
-                h_vector = [str(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]]
+                h_vector = [float(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]]
                 row1.extend(h_vector[:24])
                 row2.extend(h_vector[25:])
 #                row1 = [float(i) for i in row1]
 #                row2 = [float(i) for i in row2]
-                dataset.append(row1)
-                dataset.append(row2)
+                if len(row1)==49 and len(row2)==49:
+                    dataset.append(row1)
+                    dataset.append(row2)
+                else:
+                    print("something wrong")
             else:
                 row1.extend(
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
-                row1.extend(hand_mean_str)
+                if len(row1) == 49:
+                    row1.extend(hand_mean)
+                else:
+                    print("something is wrong")
 #                row1 = [float(i) for i in row1]
                 dataset.append(row1)
                 dataset.append(row1)
