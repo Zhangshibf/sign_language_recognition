@@ -40,18 +40,16 @@ def create_dataset(pathH,pathB,path_dataset):
             row.append(b_idx)
             if b_idx in hand_idx:
                 row.extend(
-                    [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+                    [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(
-                    [str(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
-                row = [float(i) for i in row]
+                    [float(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 dataset.append(row)
 
             else:
                 row.extend(
-                    [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+                    [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(hand_mean_str)
 
-                row = [float(i) for i in row]
                 dataset.append(row)
 
 
@@ -63,24 +61,23 @@ def create_dataset(pathH,pathB,path_dataset):
 
             if b_idx in hand_idx:
                 row1.extend(
-                    [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+                    [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
 
                 row2.extend(
-                    [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+                    [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
 
                 h_vector = [str(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]]
                 row1.extend(h_vector[:24])
                 row2.extend(h_vector[25:])
-                row1 = [float(i) for i in row1]
-                row2 = [float(i) for i in row2]
+#                row1 = [float(i) for i in row1]
+#                row2 = [float(i) for i in row2]
                 dataset.append(row1)
                 dataset.append(row2)
             else:
                 row1.extend(
-                    [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+                    [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row1.extend(hand_mean_str)
-                row1 = [float(i) for i in row1]
-                row2 = [float(i) for i in row2]
+#                row1 = [float(i) for i in row1]
                 dataset.append(row1)
                 dataset.append(row1)
 
