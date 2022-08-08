@@ -5,6 +5,8 @@ from torch.nn import functional
 import torch.optim as optim
 import argparse
 from collections import Counter
+import sklearn
+from sklearn.utils import shuffle
 
 class Dataset():
 
@@ -64,12 +66,14 @@ class Dataset():
     def train_dev_split(self, dev):
         # dev is the ID of the signer to be used as dev set.
         idx_signer_dev = [i for i, x in enumerate(self.signers) if x == dev]
-        self.dev_x = [self.instances[idx] for idx in idx_signer_dev]
-        self.dev_y = [self.labels[idx] for idx in idx_signer_dev]
+        dev_x = [self.instances[idx] for idx in idx_signer_dev]
+        dev_y = [self.labels[idx] for idx in idx_signer_dev]
+        self.dev_x,self.dev_y = sklearn.utils.shuffle(dev_x,dev_y)
 
         idx_signer_train = [i for i, x in enumerate(self.signers) if x not in [dev, 10]]
-        self.train_x = [self.instances[idx] for idx in idx_signer_train]
-        self.train_y = [self.labels[idx] for idx in idx_signer_train]
+        train_x = [self.instances[idx] for idx in idx_signer_train]
+        train_y = [self.labels[idx] for idx in idx_signer_train]
+        self.train_x, self.train_y= sklearn.utils.shuffle(train_x,train_y)
         #这里得加个shuffle
 
     def create_targets(self, idx):
@@ -185,7 +189,7 @@ def cross_val(pathDataset,lr= 0.001):
     dataset.create_test_set()
     loss_function = nn.functional.cross_entropy
     for i in range(1,10):
-        print(f"--------------Batch {i}---------------")
+        print(f"--------------Epoch {i}---------------")
         model = sign_translator(hidden_size=64, output_size=64)
         optimizer = optim.Adam(params=model.parameters(), lr=lr)
         dataset.train_dev_split(i) #i_th signer for dev set, 10th signer for test set, the rest for train set
