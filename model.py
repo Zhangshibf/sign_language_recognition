@@ -98,8 +98,8 @@ class sign_translator(nn.Module):
         self.layer3 = nn.Softmax()   #The output layer with softmax
 
     def forward(self, vectors):
-        # reshape the input for LSTM layer. The size of the expected input is [sequence length x 1 x 24]
-        video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])
+        # reshape the input for LSTM layer. The size of the expected input is [sequence length x 1 x 48]
+        video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])#这里要改
         output_layer1, (hidden, cell) = self.layer1(video_input )
         output_layer2 = self.layer2(output_layer1)
         prediction = self.layer3(output_layer2)
@@ -116,6 +116,8 @@ def train_model(model,x,y,optimizer,loss_function):
     data_num = len(x)
 
     for train_x,train_y in zip(x,y):
+        print(x)
+        print(y)
         optimizer.zero_grad()
         model_prediction = model(train_x)
         #这里肯定要改
