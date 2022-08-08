@@ -25,6 +25,7 @@ class Dataset():
                 print(len(row))
                 print(idx)
 
+        print("all good!")
         pass
 
         # each row corresponds to a frame. Now we need to group all frame data of one video together. Each video should have only one label
