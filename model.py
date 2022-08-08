@@ -96,13 +96,16 @@ class sign_translator(nn.Module):
         super(sign_translator, self).__init__()
         self.layer1 = nn.LSTM(48,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
         self.layer2 = nn.Linear(hidden_size*2 if bidirectional == True else hidden_size,output_size)  #The linear layer
-        self.layer3 = nn.Softmax()   #The output layer with softmax
+        self.layer3 = nn.Softmax(dim=1)   #The output layer with softmax
 
     def forward(self, vectors):
         # reshape the input for LSTM layer. The size of the expected input is [sequence length x 1 x 48]
         video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])#这里要改
         output_layer1, (hidden, cell) = self.layer1(video_input )
         output_layer2 = self.layer2(output_layer1)
+        print("output_layer2")
+        print(output_layer2)
+        print(output_layer2.size())
         prediction = self.layer3(output_layer2)
         print(prediction)
 
@@ -119,18 +122,16 @@ def train_model(model,x,y,optimizer,loss_function):
 
         train_x_num = list()
         for sublist in train_x:
-            sublist_num = [float(i) for i in sublist if len(sublist)==48]
+            sublist_num = [float(i) for i in sublist]#the length of each frame is not the same! Some frames' length is 24, not 48. There is something wrong
             train_x_num.append(sublist_num)
-        print(train_x_num)
 
         train_x = torch.tensor(train_x_num)
         train_y = torch.tensor(train_y)
-        print(train_x)
-        print(train_y)
         optimizer.zero_grad()
         model_prediction = model(train_x)
         #这里肯定要改
-        print(model_prediction)
+        print("model_prediction")
+        print(model_prediction.size())
         model_prediction = torch.reshape(model_prediction, [model_prediction.shape[0], model_prediction.shape[2]])
         loss_per_batch = loss_function(model_prediction, train_y)
         epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
