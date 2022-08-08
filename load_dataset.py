@@ -93,3 +93,4 @@ if __name__=="__main__":
     dataset = Dataset(args.pathDataset)
     with open(args.pickledFilePath, 'wb') as outp:
         pickle.dump(dataset, outp, pickle.HIGHEST_PROTOCOL)
+        outp.close()
