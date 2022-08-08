@@ -43,19 +43,13 @@ def create_dataset(pathH,pathB,path_dataset):
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(
                     [float(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
-                if len(row)==49:
-                    dataset.append(row)
-                else:
-                    print("no")
+                dataset.append(row)
 
             else:
                 row.extend(
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(hand_mean)
-                if len(row)==49:
-                    dataset.append(row)
-                else:
-                    print("nono")
+                dataset.append(row)
 
 
         elif b_idx[:3] in idx_both:
@@ -75,28 +69,22 @@ def create_dataset(pathH,pathB,path_dataset):
                 row1.extend([float(i) for i in h_vector[:24]])
                 row2.extend([float(i) for i in h_vector[25:]])
 
-                if len(row1)==49 and len(row2)==49:
-                    dataset.append(row1)
-                    dataset.append(row2)
-                else:
-                    print("something wrong")
+                dataset.append(row1)
+                dataset.append(row2)
+
             else:
                 row1.extend(
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row1.extend(hand_mean)
-                if len(row1) == 49:
-                    dataset.append(row1)
-                    dataset.append(row1)
-
-                else:
-                    print("something is wrong")
+                dataset.append(row1)
+                dataset.append(row1)
 
 
 
     #and now the dataset is ready!
     f = open(path_dataset, "a", encoding="utf-8")
     for row in dataset:
-        line = ",".join(row)
+        line = ','.join(map(str, row))
         line_n = line+"\n"
         f.write(line_n)
     f.close()
