@@ -1,4 +1,4 @@
-import cPickle as pickle
+import pickle
 from collections import Counter
 import argparse
 
