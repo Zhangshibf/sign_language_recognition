@@ -1,4 +1,4 @@
-import pickle
+import pickle5 as pickle
 import torch
 import torch.nn as nn
 from torch.nn import functional
@@ -81,8 +81,8 @@ def evaluate_model(model, x,y, loss_function):
         print(f"The averaged accuracy is {accuracy}")
 
 
-def cross_val(datasetPath,lr= 0.0001):
-    with open(datasetPath, 'rb') as inp:
+def cross_val(pathDataset,lr= 0.0001):
+    with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
     dataset.create_test_set()
     loss_function = nn.functional.cross_entropy
