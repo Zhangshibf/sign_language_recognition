@@ -19,14 +19,7 @@ class Dataset():
 #            row_data = row.split(",")
 #            idxs.append(row_data[0])
 #            features.append(row_data[1:])
-#remember to delete this part
-        for row,idx in zip(features,idxs):
-            if len(row)!=48:
-                print(len(row))
-                print(idx)
 
-        print("all good!")
-        pass
 
         # each row corresponds to a frame. Now we need to group all frame data of one video together. Each video should have only one label
         # 047_001_001_18.jpg
