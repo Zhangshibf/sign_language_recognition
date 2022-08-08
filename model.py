@@ -119,6 +119,7 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
+        train_y-=1
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         print(train_y)
@@ -129,7 +130,7 @@ def train_model(model,x,y,optimizer,loss_function):
         #这里肯定要改
         print("model_prediction")
         print(model_prediction.size())
-        model_prediction = torch.reshape(model_prediction, [model_prediction.shape[0], model_prediction.shape[2]])
+#        model_prediction = torch.reshape(model_prediction, [model_prediction.shape[0], model_prediction.shape[2]])
         loss_per_batch = loss_function(model_prediction, train_y)
         epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
         epoch_loss += loss_per_batch.item()
