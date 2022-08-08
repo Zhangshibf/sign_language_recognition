@@ -116,6 +116,8 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
+        for i in train_x:
+            print(len(i))
         train_x_num = list()
         for sublist in train_x:
             sublist_num = [float(i) for i in sublist]
