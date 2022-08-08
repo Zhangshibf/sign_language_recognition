@@ -94,7 +94,7 @@ class sign_translator(nn.Module):
     def __init__(self, hidden_size,output_size, bidirectional=True, num_layers=2, dropout=0.2):
 
         super(sign_translator, self).__init__()
-        self.layer1 = nn.LSTM(48,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
+        self.layer1 = nn.LSTM(24,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
         self.layer2 = nn.Linear(hidden_size*2 if bidirectional == True else hidden_size,output_size)  #The linear layer
         self.layer3 = nn.Softmax(dim=1)   #The output layer with softmax
 
@@ -118,7 +118,7 @@ def train_model(model,x,y,optimizer,loss_function):
     data_num = len(x)
     for train_x,train_y in zip(x,y):
         train_y-=1#because label starts from 0 when using cross-entropy in pytorch
-        train_x = torch.tensor(train_x)
+        train_x = torch.tensor(train_x[:24])
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
         optimizer.zero_grad()
@@ -156,7 +156,7 @@ def evaluate_model(model, x,y, loss_function):
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
             dev_y -= 1  # because label starts from 0 when using cross-entropy in pytorch
-            dev_x = torch.tensor(dev_x)
+            dev_x = torch.tensor(dev_x[:24])
             dev_y = torch.tensor(dev_y)
             dev_y = torch.reshape(dev_y, [1])
             model_prediction = model(dev_x)
