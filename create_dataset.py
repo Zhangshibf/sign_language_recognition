@@ -49,6 +49,7 @@ def create_dataset(pathH,pathB,path_dataset):
                     print("no")
 
             else:
+                print(body_24_pd.loc[body_24_pd['index'] == b_idx])
                 row.extend(
                     [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(hand_mean)
