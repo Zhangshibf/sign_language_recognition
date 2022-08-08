@@ -48,15 +48,17 @@ def create_dataset(pathH,pathB,path_dataset):
                     dataset.append(row)
                 else:
                     print(b_idx)
+                    print(len(row))
                     print("something wrong")
             else:
                 row.extend(
                     [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(hand_mean_str)
-                if len(row)==48:
+                if len(row)==49:
                     dataset.append(row)
                 else:
                     print(b_idx)
+                    print(len(row))
                     print("something wrong")
 
         elif b_idx[:3] in idx_both:
@@ -75,7 +77,7 @@ def create_dataset(pathH,pathB,path_dataset):
                 h_vector = [str(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]]
                 row1.extend(h_vector[:24])
                 row2.extend(h_vector[25:])
-                if len(row1)==48 and len(row2)==48:
+                if len(row1)==49 and len(row2)==49:
                     dataset.append(row1)
                     dataset.append(row2)
                 else:
@@ -88,13 +90,12 @@ def create_dataset(pathH,pathB,path_dataset):
                     [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row1.extend(hand_mean_str)
 
-                if len(row1) == 48 and len(row2) == 48:
+                if len(row1) == 49:
                     dataset.append(row1)
-                    dataset.append(row2)
+                    dataset.append(row1)
                 else:
                     print("something is wrong")
                     print(len(row1))
-                    print(len(row2))
                     print(b_idx)
 
     #and now the dataset is ready!
