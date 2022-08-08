@@ -1,14 +1,8 @@
-
+import pickle
 import torch
 import torch.nn as nn
 from torch.nn import functional
 import torch.optim as optim
-#from torch.utils.data import DataLoader,Dataset
-
-
-
-
-
 
 class sign_translator(nn.Module):
 
@@ -41,6 +35,7 @@ def train_model(model,x,y,optimizer,loss_function):
         optimizer.zero_grad()
         model_prediction = model(train_x)
         #这里肯定要改
+        print(model_prediction)
         model_prediction = torch.reshape(model_prediction, [model_prediction.shape[0], model_prediction.shape[2]])
         loss_per_batch = loss_function(model_prediction, train_y)
         epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
@@ -86,14 +81,16 @@ def evaluate_model(model, x,y, loss_function):
         print(f"The averaged accuracy is {accuracy}")
 
 
-def cross_val(dataset,lr= 0.0001):
+def cross_val(datasetPath,lr= 0.0001):
+    with open(datasetPath, 'rb') as inp:
+        dataset = pickle.load(inp)
     dataset.create_test_set()
     loss_function = nn.functional.cross_entropy
     for i in range(1,10):
         print(f"--------------Batch {i}---------------")
         model = sign_translator(hidden_size=64, output_size=64)
         optimizer = optim.Adam(params=model.parameters(), lr=lr)
-        dataset.train_dev_split(i)#i_th signer for dev set, 10th signer for test set, the rest for train set
+        dataset.train_dev_split(i) #i_th signer for dev set, 10th signer for test set, the rest for train set
         train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function)
         evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function)
 
