@@ -122,6 +122,8 @@ def train_model(model,x,y,optimizer,loss_function):
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         print(train_y)
+        train_y = nn.functional.one_hot(train_y, num_classes=64)
+        print(train_y)
         optimizer.zero_grad()
         model_prediction = model(train_x)
         #这里肯定要改
