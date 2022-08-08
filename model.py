@@ -121,7 +121,8 @@ def train_model(model,x,y,optimizer,loss_function):
 
 
         train_x_b = train_x[:24]
-
+        print("train_x:",train_x)
+        print("train_x_b",train_x_b)
         train_x_b = torch.tensor(train_x_b)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
