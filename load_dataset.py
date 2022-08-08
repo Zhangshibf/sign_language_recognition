@@ -22,7 +22,7 @@ class Dataset():
                 print(len(row))
                 print(idx)
 
-        break
+        pass
         # each row corresponds to a frame. Now we need to group all frame data of one video together. Each video should have only one label
         # 047_001_001_18.jpg
         videos = list(Counter([i[:11] for i in idxs]))
