@@ -116,9 +116,10 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
+        train_x = torch.tensor(train_x)
+        train_y = torch.tensor(train_y)
         print(train_x)
         print(train_y)
-        break
         optimizer.zero_grad()
         model_prediction = model(train_x)
         #这里肯定要改
