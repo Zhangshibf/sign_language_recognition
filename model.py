@@ -115,14 +115,9 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_loss = 0
     epoch_accuracy = 0
     data_num = len(x)
-    print(len(x))
-    print(len(x[0]))
-    print(len(y))
-    print(len(y[0]))
     for train_x,train_y in zip(x,y):
-        pass
-        print(x)
-        print(y)
+        print(train_x)
+        print(train_y)
         break
         optimizer.zero_grad()
         model_prediction = model(train_x)
