@@ -17,6 +17,7 @@ def create_image_dataset(path_frames,path_dataset):
             transform = transforms.Compose([transforms.ToTensor()])
             tensor = transform(imgRGB)
             flat = torch.flatten(tensor).tolist()
+            flat = [str(i) for i in flat]
             temporal_joined = ",".join(flat)
             line = str(name + "," + temporal_joined + "\n")
             f.write(line)
