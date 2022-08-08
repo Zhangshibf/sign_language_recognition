@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from torch.nn import functional
 import torch.optim as optim
+import argparse
 
 class Dataset():
 
@@ -179,3 +180,10 @@ def cross_val(pathDataset,lr= 0.0001):
 
     print("--------------Final Evaluation---------------")
     evaluate_model(model, dataset.test_x,dataset.test_y, loss_function)
+
+
+if __name__=="__main__":
+    a = argparse.ArgumentParser()
+    a.add_argument("--pathDataset", help="path to the pickled dataset object")
+    args = a.parse_args()
+    model.cross_val(args.pathDataset)
