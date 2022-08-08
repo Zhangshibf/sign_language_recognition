@@ -118,7 +118,7 @@ def train_model(model,x,y,optimizer,loss_function):
     for train_x,train_y in zip(x,y):
         train_x_num = list()
         for sublist in train_x:
-            sublist_num = [int(i) for i in sublist]
+            sublist_num = [float(i) for i in sublist]
             train_x_num.append(sublist_num)
 
         train_x = torch.tensor(train_x_num)
