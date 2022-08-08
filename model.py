@@ -4,6 +4,7 @@ import torch.nn as nn
 from torch.nn import functional
 import torch.optim as optim
 import argparse
+from collections import Counter
 
 class Dataset():
 
@@ -118,6 +119,7 @@ def train_model(model,x,y,optimizer,loss_function):
     for train_x,train_y in zip(x,y):
         print(x)
         print(y)
+        break
         optimizer.zero_grad()
         model_prediction = model(train_x)
         #这里肯定要改
