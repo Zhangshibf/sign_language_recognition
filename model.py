@@ -121,6 +121,7 @@ def train_model(model,x,y,optimizer,loss_function):
         for sublist in train_x:
             sublist_num = [float(i) for i in sublist if len(sublist)==48]
             train_x_num.append(sublist_num)
+        print(train_x_num)
 
         train_x = torch.tensor(train_x_num)
         train_y = torch.tensor(train_y)
