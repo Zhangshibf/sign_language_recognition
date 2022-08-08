@@ -104,10 +104,8 @@ class sign_translator(nn.Module):
         output_layer1, (hidden, cell) = self.layer1(video_input )
         output_layer2 = self.layer2(output_layer1)
         last_output = output_layer2[-1]
-        print(last_output.size())
         #we should take the last output of layer2.
         prediction = self.layer3(last_output)
-        print(prediction)
 
         return prediction
 
@@ -124,7 +122,7 @@ def train_model(model,x,y,optimizer,loss_function):
         train_y = torch.tensor(train_y)
         print(train_y)
 #        train_y = nn.functional.one_hot(train_y, num_classes=64)
-#        train_y = torch.reshape(train_y, [1, 64])
+        train_y = torch.reshape(train_y, [1])
         print(train_y)
         optimizer.zero_grad()
         model_prediction = model(train_x)
