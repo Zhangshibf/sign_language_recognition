@@ -120,15 +120,9 @@ def train_model(model,x,y,optimizer,loss_function):
         train_y-=1#because label starts from 0 when using cross-entropy in pytorch
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
-        print(train_y)
-#        train_y = nn.functional.one_hot(train_y, num_classes=64)
         train_y = torch.reshape(train_y, [1])
-        print(train_y)
         optimizer.zero_grad()
         model_prediction = model(train_x)
-        #这里肯定要改
-        print("model_prediction",model_prediction.shape)
-        print("train_y:", train_y.shape)
         loss_per_batch = loss_function(model_prediction, train_y)
         epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
         epoch_loss += loss_per_batch.item()
@@ -161,8 +155,11 @@ def evaluate_model(model, x,y, loss_function):
     data_num = len(x)
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
+            dev_y -= 1  # because label starts from 0 when using cross-entropy in pytorch
+            dev_x = torch.tensor(dev_x)
+            dev_y = torch.tensor(dev_y)
+            dev_y = torch.reshape(dev_y, [1])
             model_prediction = model(dev_x)
-            model_prediction = torch.reshape(model_prediction, [model_prediction.shape[0], model_prediction.shape[2]])
             loss = loss_function(model_prediction, dev_y)
             epoch_accuracy += calculate_accuracy_per_batch(model_prediction, dev_y)
             epoch_loss += loss.item()
