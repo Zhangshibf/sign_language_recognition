@@ -107,7 +107,7 @@ class sign_translator(nn.Module):
         print(output_layer2)
         print(output_layer2.size())
         last_output = output_layer2[-1]
-        print(last_output_layer2.size())
+        print(last_output.size())
         print(last_output)
         #we should take the last output of layer2.
         prediction = self.layer3(output_layer2)
