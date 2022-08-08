@@ -43,23 +43,17 @@ def create_dataset(pathH,pathB,path_dataset):
                     [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(
                     [str(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
+                row = [float(i) for i in row]
+                dataset.append(row)
 
-                if len(row)==49:
-                    dataset.append(row)
-                else:
-                    print(b_idx)
-                    print(len(row))
-                    print("something wrong")
             else:
                 row.extend(
                     [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row.extend(hand_mean_str)
-                if len(row)==49:
-                    dataset.append(row)
-                else:
-                    print(b_idx)
-                    print(len(row))
-                    print("something wrong")
+
+                row = [float(i) for i in row]
+                dataset.append(row)
+
 
         elif b_idx[:3] in idx_both:
             row1 = list()
@@ -77,26 +71,18 @@ def create_dataset(pathH,pathB,path_dataset):
                 h_vector = [str(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]]
                 row1.extend(h_vector[:24])
                 row2.extend(h_vector[25:])
-                if len(row1)==49 and len(row2)==49:
-                    dataset.append(row1)
-                    dataset.append(row2)
-                else:
-                    print("something is wrong")
-                    print(len(row1))
-                    print(len(row2))
-                    print(b_idx)
+                row1 = [float(i) for i in row1]
+                row2 = [float(i) for i in row2]
+                dataset.append(row1)
+                dataset.append(row2)
             else:
                 row1.extend(
                     [str(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
                 row1.extend(hand_mean_str)
-
-                if len(row1) == 49:
-                    dataset.append(row1)
-                    dataset.append(row1)
-                else:
-                    print("something is wrong")
-                    print(len(row1))
-                    print(b_idx)
+                row1 = [float(i) for i in row1]
+                row2 = [float(i) for i in row2]
+                dataset.append(row1)
+                dataset.append(row1)
 
     #and now the dataset is ready!
     f = open(path_dataset, "a", encoding="utf-8")
