@@ -1,28 +1,32 @@
 import pickle
 from collections import Counter
 import argparse
+import pandas as pd
 
 class Dataset():
 
     def __init__(self, path_dataset):
         instances = list()
         labels = list()
-        f = open(path_dataset)
-        data = f.read()
-        rows = data.split("\n")
-        idxs = list()
-        features = list()
-        for row in rows:
-            row_data = row.split(",")
-            idxs.append(row_data[0])
-            features.append(row_data[1:])
-
+#        f = open(path_dataset)
+#        data = f.read()
+#        rows = data.split("\n")
+        dataset_df = pd.read_csv(path_dataset,header=None)
+        idxs = list(dataset_df[0])
+        del dataset_df[0]
+        features = dataset_df.values.tolist()
+#        for row in rows:
+#            row_data = row.split(",")
+#            idxs.append(row_data[0])
+#            features.append(row_data[1:])
+#remember to delete this part
         for row,idx in zip(features,idxs):
             if len(row)!=48:
                 print(len(row))
                 print(idx)
 
         pass
+
         # each row corresponds to a frame. Now we need to group all frame data of one video together. Each video should have only one label
         # 047_001_001_18.jpg
         videos = list(Counter([i[:11] for i in idxs]))
