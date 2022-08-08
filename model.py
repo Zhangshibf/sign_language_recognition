@@ -120,9 +120,9 @@ def train_model(model,x,y,optimizer,loss_function):
         train_y-=1#because label starts from 0 when using cross-entropy in pytorch
 
 
-        train_x_b = train_x[:24]
-        print("train_x:",train_x)
-        print("train_x_b",train_x_b)
+        train_x_b = [i[:24] for i in train_x]
+
+
         train_x_b = torch.tensor(train_x_b)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
@@ -162,7 +162,7 @@ def evaluate_model(model, x,y, loss_function):
         for dev_x,dev_y in zip(x,y):
             dev_y -= 1  # because label starts from 0 when using cross-entropy in pytorch
 
-            dev_x_b = dev_x[:24]
+            dev_x_b = [i[:24] for i in dev_x]
 
 
             dev_x = torch.tensor(dev_x_b)
