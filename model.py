@@ -119,12 +119,12 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
-        train_y-=1
+        train_y-=1#because label starts from 0 when using cross-entropy in pytorch
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         print(train_y)
-        train_y = nn.functional.one_hot(train_y, num_classes=64)
-        train_y = torch.reshape(train_y, [1, 64])
+#        train_y = nn.functional.one_hot(train_y, num_classes=64)
+#        train_y = torch.reshape(train_y, [1, 64])
         print(train_y)
         optimizer.zero_grad()
         model_prediction = model(train_x)
