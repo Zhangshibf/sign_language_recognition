@@ -44,7 +44,7 @@ def create_dataset(pathH,pathB,path_dataset):
                 row.extend(
                     [str(i) for i in hand_24_pd.loc[hand_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
 
-                if len(row)==48:
+                if len(row)==49:
                     dataset.append(row)
                 else:
                     print(b_idx)
