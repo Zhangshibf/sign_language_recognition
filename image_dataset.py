@@ -21,6 +21,7 @@ def create_image_dataset(pathFrames):
             resized_img = T.functional.resize(orig_img, [54, 96])
             tensor_img = convertor(resized_img)
             images.append(tensor_img)
+
     return images,names
 
 class Dataset():
@@ -98,12 +99,12 @@ class Dataset():
 
 
 if __name__=="__main__":
-    a = argparse.ArgumentParser()
-    a.add_argument("--pathFrames", help="path to the folder of frames")
- #   a.add_argument("--pathDataset",help = "path where you'd like to pickle the dataset")
-    args = a.parse_args()
-    print(args)
-    images,names = create_image_dataset(args.pathFrames)
+#    a = argparse.ArgumentParser()
+#    a.add_argument("--pathFrames", help="path to the folder of frames")
+#   a.add_argument("--pathDataset",help = "path where you'd like to pickle the dataset")
+#    args = a.parse_args()
+#    print(args)
+    images,names = create_image_dataset("/home/CE/zhangshi/signlanguage/lsa_frames")
     print(names)
     dataset = Dataset(images,names)
 
