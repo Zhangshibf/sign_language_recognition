@@ -99,13 +99,14 @@ class sign_translator(nn.Module):
     def __init__(self, hidden_size,output_size, bidirectional=True, num_layers=2, dropout=0.2):
 
         super(sign_translator, self).__init__()
-        self.layer1 = nn.LSTM(24,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
+        self.layer1 = nn.LSTM(48
+                              ,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
         self.layer2 = nn.Linear(hidden_size*2 if bidirectional == True else hidden_size,output_size)  #The linear layer
         self.layer3 = nn.Softmax(dim=1)   #The output layer with softmax
 
     def forward(self, vectors):
         # reshape the input for LSTM layer. The size of the expected input is [sequence length x 1 x 48]
-        video_input = torch.reshape(vectors, [vectors.shape[0], 1, 24])#这里要改
+        video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])#这里要改
         output_layer1, (hidden, cell) = self.layer1(video_input )
         output_layer2 = self.layer2(output_layer1)
         last_output = output_layer2[-1]
