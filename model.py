@@ -79,9 +79,9 @@ class Dataset():
         y = list()
         for i in idx:
             video = i[:3]
-            video_int = int(video.lstrip("0"))
-            video_int-=1 #because label starts from 0 when using cross-entropy in pytorch
+            video_int = int(video.lstrip("0"))-1 #because label starts from 0 when using cross-entropy in pytorch
             y.append(video_int)
+        print(y)
         return y
 
     def create_signer_list(self, idx):
