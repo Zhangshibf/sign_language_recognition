@@ -100,7 +100,7 @@ class Dataset():
 if __name__=="__main__":
     a = argparse.ArgumentParser()
     a.add_argument("--pathFrames", help="path to the folder of frames")
-    a.add_argument("--pathDataset",help = "path where you'd like to pickle the dataset")
+ #   a.add_argument("--pathDataset",help = "path where you'd like to pickle the dataset")
     args = a.parse_args()
     print(args)
     images,names = create_image_dataset(args.pathFrames)
