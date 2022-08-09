@@ -126,6 +126,7 @@ def train_model(model,x,y,optimizer,loss_function):
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
         optimizer.zero_grad()
+        print(train_x.size)
         model_prediction = model(train_x)
         loss_per_batch = loss_function(model_prediction, train_y)
         epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
