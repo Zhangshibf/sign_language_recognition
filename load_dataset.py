@@ -8,17 +8,10 @@ class Dataset():
     def __init__(self, path_dataset):
         instances = list()
         labels = list()
-#        f = open(path_dataset)
-#        data = f.read()
-#        rows = data.split("\n")
         dataset_df = pd.read_csv(path_dataset,header=None)
         idxs = list(dataset_df[0])
         del dataset_df[0]
         features = dataset_df.values.tolist()
-#        for row in rows:
-#            row_data = row.split(",")
-#            idxs.append(row_data[0])
-#            features.append(row_data[1:])
 
 
         # each row corresponds to a frame. Now we need to group all frame data of one video together. Each video should have only one label
@@ -42,7 +35,7 @@ class Dataset():
         signer = self.create_signer_list(labels)
 
         self.signers = signer
-        self.labels = targets
+        self.labels = [i-1 for i in targets]
         self.instances = instances
 
     def __len__(self):
