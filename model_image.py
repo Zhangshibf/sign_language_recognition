@@ -191,7 +191,7 @@ def cross_val(pathDataset,lr= 0.001):
 
 
 if __name__=="__main__":
-    a = argparse.ArgumentParser()
-    a.add_argument("--pathDataset", help="path to the pickled dataset object")
-    args = a.parse_args()
-    cross_val(args.pathDataset)
+#    a = argparse.ArgumentParser()
+#    a.add_argument("--pathDataset", help="path to the pickled dataset object")
+#    args = a.parse_args()
+    cross_val("/home/CE/zhangshi/signlanguage/image_dataset.pickle")
