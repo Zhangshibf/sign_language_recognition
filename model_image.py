@@ -108,7 +108,7 @@ class sign_translator(nn.Module):
         output3 = self.conv3(output2)
         video = output3.reshape(output3.size()[0],output3.size()[3])
         output_layer1, (hidden, cell) = self.lstm(video)
-        last_output = output_layer1[:, -1, :]
+        last_output = output_layer1[-1]
         prediction = self.linear(last_output)
 
         return prediction
