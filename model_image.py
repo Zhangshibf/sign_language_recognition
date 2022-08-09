@@ -141,8 +141,7 @@ def train_model(model,x,y,optimizer,loss_function):
     print(f"The averaged accuracy per instance is {accuracy}")
 
 def calculate_accuracy_per_batch(prediction,y):
-    print(prediction)
-    prediction = torch.max(prediction,1)[1]
+    prediction = torch.max(prediction,0)[1]
     correct = 0
     for i,j in zip(prediction,y):
         if i==j:
