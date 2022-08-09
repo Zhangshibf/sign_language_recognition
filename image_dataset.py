@@ -106,6 +106,6 @@ if __name__=="__main__":
     images,names = create_image_dataset(args.pathFrames)
     dataset = Dataset(images,names)
 
-    with open(args.pathDataset, 'wb') as outp:
+    with open("/home/CE/zhangshi/signlanguage/image_dataset.pickle", 'wb') as outp:
         pickle.dump(dataset, outp, pickle.HIGHEST_PROTOCOL)
         outp.close()
