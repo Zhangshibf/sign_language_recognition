@@ -123,11 +123,9 @@ def train_model(model,x,y,optimizer,loss_function):
     data_num = len(x)
     for train_x,train_y in zip(x,y):
         train_x = torch.tensor(train_x)
-        print(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
         optimizer.zero_grad()
-        print(train_x.size)
         model_prediction = model(train_x)
         loss_per_batch = loss_function(model_prediction, train_y)
         epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
