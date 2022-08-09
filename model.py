@@ -41,7 +41,6 @@ class Dataset():
             instances.append(video_feature)
 
         targets = self.create_targets(labels)
-        print(targets)
         signer = self.create_signer_list(labels)
 
         self.signers = signer
@@ -180,6 +179,7 @@ def cross_val(pathDataset,lr= 0.01):
     with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
     dataset.create_test_set()
+    print(dataset.targets)
     loss_function = nn.functional.cross_entropy
     for i in range(1,10):
         print(f"--------------Epoch {i}---------------")
