@@ -124,6 +124,7 @@ def train_model(model,x,y,optimizer,loss_function):
         train_x = torch.stack(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.nn.functional.one_hot(train_y, num_classes=64)
+        train_y = train_y.type(torch.FloatTensor)
         print(train_y.size())
 #        train_y = torch.reshape(train_y, [1])
         optimizer.zero_grad()
