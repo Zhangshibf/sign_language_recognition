@@ -8,8 +8,8 @@ def create_dataset(pathB,path_dataset):
     body = pd.read_csv(pathB, sep=",")
     upper_body = body.iloc[:,
                  45:]  # delete keypoints related to face
-#    body_24 = StandardScaler().fit_transform(upper_body)
-    body_24_pd = pd.DataFrame(upper_body)
+    body_24 = StandardScaler().fit_transform(upper_body)
+    body_24_pd = pd.DataFrame(body_24)
     body_24_pd["index"] = body.iloc[:, 0]
 
 
