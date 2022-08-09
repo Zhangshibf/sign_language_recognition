@@ -121,7 +121,6 @@ def train_model(model,x,y,optimizer,loss_function):
     data_num = len(x)
     for train_x,train_y in zip(x,y):
         train_x = torch.tensor(train_x)
-        print(train_x.size())
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
         optimizer.zero_grad()
@@ -141,7 +140,10 @@ def train_model(model,x,y,optimizer,loss_function):
 def calculate_accuracy_per_batch(prediction,y):
 
     prediction = torch.max(prediction,1)[1]
+    print(prediction)
+    print(y)
     correct = 0
+    #这儿肯定不对，我到现在才注意到
     for i,j in zip(prediction,y):
         if i==j:
             correct+=1
