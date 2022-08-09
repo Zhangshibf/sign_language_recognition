@@ -105,7 +105,7 @@ class sign_translator(nn.Module):
 
     def forward(self, vectors):
         # reshape the input for LSTM layer. The size of the expected input is [sequence length x 1 x 48]
-        video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])#这里要改
+        video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])
         output_layer1, (hidden, cell) = self.layer1(video_input )
         output_layer2 = self.layer2(output_layer1)
         last_output = output_layer2[-1]
