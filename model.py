@@ -41,6 +41,7 @@ class Dataset():
             instances.append(video_feature)
 
         targets = self.create_targets(labels)
+        print(targets)
         signer = self.create_signer_list(labels)
 
         self.signers = signer
