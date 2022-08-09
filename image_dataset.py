@@ -104,6 +104,7 @@ if __name__=="__main__":
     args = a.parse_args()
     print(args)
     images,names = create_image_dataset(args.pathFrames)
+    print(names)
     dataset = Dataset(images,names)
 
     with open("/home/CE/zhangshi/signlanguage/image_dataset.pickle", 'wb') as outp:
