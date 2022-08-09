@@ -143,8 +143,6 @@ def train_model(model,x,y,optimizer,loss_function):
 def correct_or_not(prediction,y):
     prediction = torch.max(prediction,0)[1]
     target = torch.max(y,0)[1]
-    print(prediction)
-    print(target)
     if prediction ==target:
         return 1
     else:
