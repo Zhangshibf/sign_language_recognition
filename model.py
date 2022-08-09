@@ -74,7 +74,6 @@ class Dataset():
         train_x = [self.instances[idx] for idx in idx_signer_train]
         train_y = [self.labels[idx] for idx in idx_signer_train]
         self.train_x, self.train_y= sklearn.utils.shuffle(train_x,train_y)
-        #这里得加个shuffle
 
     def create_targets(self, idx):
         y = list()
