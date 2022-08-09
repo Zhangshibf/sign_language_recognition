@@ -158,9 +158,9 @@ def evaluate_model(model, x,y, loss_function):
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
             dev_x = torch.stack(dev_x)
-            train_y = torch.tensor(train_y)
-            train_y = torch.nn.functional.one_hot(train_y, num_classes=64)
-            train_y = train_y.type(torch.FloatTensor)
+            dev_y = torch.tensor(dev_y)
+            dev_y = torch.nn.functional.one_hot(dev_y, num_classes=64)
+            dev_y = dev_y.type(torch.FloatTensor)
             model_prediction = model(dev_x)
             loss = loss_function(model_prediction, dev_y)
             epoch_accuracy += correct_or_not(model_prediction, dev_y)
