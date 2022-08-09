@@ -1,35 +1,37 @@
 import pandas as pd
 import argparse
+import os
+import torch
+import pickle
+import torchvision.transforms as T
+from PIL import Image
+def create_image_dataset(path_frames,path_images,path_names):
+    images = list()
+    names = list()
+    convertor = T.Compose(
+        [T.ToTensor(),
+         T.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    for root, dirs, files in os.walk(path_frames, topdown=False):
+        for name in files:
+            names.append(name)
+            image_path = os.path.join(root, name)
+            orig_img = Image.open(image_path)
+            resized_img = T.functional.resize(orig_img, [27, 48])
+            images.append(convertor(resized_img))
 
+        with open(path_images, 'wb') as outp:
+            pickle.dump(images, outp, pickle.HIGHEST_PROTOCOL)
+            outp.close()
 
-def create_dataset(pathB,path_dataset):
-    upper_body = pd.read_csv(pathB, sep=",")
-    body_24_pd = pd.DataFrame(upper_body)
-    body_24_pd["index"] = body.iloc[:, 0]
-
-
-    dataset = list()
-    body_idx = list(body_24_pd["index"])
-
-    for b_idx in body_idx:
-        row = list()
-        row.append(b_idx)
-        row.extend(
-                    [float(i) for i in body_24_pd.loc[body_24_pd['index'] == b_idx].values.flatten().tolist()[:-1]])
-        dataset.append(row)
-
-    #and now the dataset is ready!
-    f = open(path_dataset, "a", encoding="utf-8")
-    for row in dataset:
-        line = ','.join(map(str, row))
-        line_n = line+"\n"
-        f.write(line_n)
-    f.close()
+        with open(path_names, 'wb') as outp:
+            pickle.dump(names, outp, pickle.HIGHEST_PROTOCOL)
+            outp.close()
 
 if __name__=="__main__":
     a = argparse.ArgumentParser()
     a.add_argument("--pathB", help="path to the files where you'd like to save the data")
-    a.add_argument("--path_dataset", help="path to the files where you'd like to save the data")
+    a.add_argument("--path_images", help="path to the files where you'd like to save the image data")
+    a.add_argument("--path_names", help="path to the files where you'd like to save the name data")
     args = a.parse_args()
     print(args)
-    create_dataset(args.pathB,args.path_dataset)
+    create_image_dataset(args.pathB,args.path_images,args.path_names)
