@@ -97,17 +97,16 @@ class sign_translator(nn.Module):
     def __init__(self, hidden_size,output_size, bidirectional=True, num_layers=2, dropout=0.2):
 
         super(sign_translator, self).__init__()
-        self.layer1 = nn.LSTM(48
-                              ,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
-#        self.layer2 = nn.Linear(hidden_size*2 if bidirectional == True else hidden_size,output_size)  #The linear layer
+        self.layer1 = nn.LSTM(48,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
+        self.layer2 = nn.Linear(hidden_size*2 if bidirectional == True else hidden_size,output_size)  #The linear layer
         self.layer3 = nn.Softmax(dim=1)   #The output layer with softmax
 
     def forward(self, vectors):
         # reshape the input for LSTM layer. The size of the expected input is [sequence length x 1 x 48]
         video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])
         output_layer1, (hidden, cell) = self.layer1(video_input )
- #       output_layer2 = self.layer2(output_layer1)
-        last_output = output_layer1[-1]
+        output_layer2 = self.layer2(output_layer1)
+        last_output = output_layer2[-1]
         #we should take the last output of layer2.
         prediction = self.layer3(last_output)
 
@@ -122,12 +121,11 @@ def train_model(model,x,y,optimizer,loss_function):
     data_num = len(x)
     for train_x,train_y in zip(x,y):
         train_x = torch.tensor(train_x)
+        print(train_x.size())
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
         optimizer.zero_grad()
         model_prediction = model(train_x)
-#        print(train_y.size())
-#        print(model_prediction.size())
         loss_per_batch = loss_function(model_prediction, train_y)
         epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
         epoch_loss += loss_per_batch.item()
