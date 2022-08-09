@@ -24,8 +24,13 @@ class Dataset():
             labels.append(video_name)
             # find all frames of the same video, group them together. That's an instance
             frame_names = [i for i in idxs if video_name in i]
-            frame_names.sort()  # to make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
-            frame_idxs = [i for i, x in enumerate(idxs) if x in frame_names]
+#            frame_names.sort()  # to make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
+            frame_names_dict = dict()
+            for item in frame_names:
+                frame_names_dict[item] = int(item.split("_")[-1].rstrip(".jpg"))
+            frame_name_tuples = sorted(((v, k) for k, v in frame_names_dict.items()), reverse=False)
+            frame_name_sorted = [i[1] for i in frame_name_tuples]
+            frame_idxs = [i for i, x in enumerate(idxs) if x in frame_name_sorted]
             video_feature = list()
             for frame_idx in frame_idxs:
                 video_feature.append(features[frame_idx])
