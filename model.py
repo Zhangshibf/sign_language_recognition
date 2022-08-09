@@ -99,15 +99,15 @@ class sign_translator(nn.Module):
         super(sign_translator, self).__init__()
         self.layer1 = nn.LSTM(48
                               ,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
-        self.layer2 = nn.Linear(hidden_size*2 if bidirectional == True else hidden_size,output_size)  #The linear layer
+#        self.layer2 = nn.Linear(hidden_size*2 if bidirectional == True else hidden_size,output_size)  #The linear layer
         self.layer3 = nn.Softmax(dim=1)   #The output layer with softmax
 
     def forward(self, vectors):
         # reshape the input for LSTM layer. The size of the expected input is [sequence length x 1 x 48]
         video_input = torch.reshape(vectors, [vectors.shape[0], 1, 48])
         output_layer1, (hidden, cell) = self.layer1(video_input )
-        output_layer2 = self.layer2(output_layer1)
-        last_output = output_layer2[-1]
+ #       output_layer2 = self.layer2(output_layer1)
+        last_output = output_layer1[-1]
         #we should take the last output of layer2.
         prediction = self.layer3(last_output)
 
@@ -178,7 +178,6 @@ def cross_val(pathDataset,lr= 0.01):
     with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
     dataset.create_test_set()
-    print(dataset.labels)
     loss_function = nn.functional.cross_entropy
     for i in range(1,10):
         print(f"--------------Epoch {i}---------------")
