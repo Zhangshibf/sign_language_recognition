@@ -124,10 +124,11 @@ def train_model(model,x,y,optimizer,loss_function):
         train_x = torch.stack(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.nn.functional.one_hot(train_y, num_classes=64)
+        print(train_y.size())
 #        train_y = torch.reshape(train_y, [1])
         optimizer.zero_grad()
         model_prediction = model(train_x)
-
+        print(model_prediction.size())
         loss_per_batch = loss_function(model_prediction, train_y)
         epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
         epoch_loss += loss_per_batch.item()
