@@ -30,6 +30,7 @@ class Dataset():
                 frame_names_dict[item] = int(item.split("_")[-1].rstrip(".jpg"))
             frame_name_tuples = sorted(((v, k) for k, v in frame_names_dict.items()), reverse=False)
             frame_name_sorted = [i[1] for i in frame_name_tuples]
+            print(frame_name_sorted)
             frame_idxs = [i for i, x in enumerate(idxs) if x in frame_name_sorted]
             video_feature = list()
             for frame_idx in frame_idxs:
