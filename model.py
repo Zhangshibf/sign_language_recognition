@@ -152,11 +152,8 @@ def train_model(model,x,y,optimizer,loss_function):
 #    return accuracy_per_batch
 
 def correct_or_not(prediction,y):
-    print(prediction)
-    print(y)
     prediction = torch.max(prediction,1)[1]
-    print(prediction)
-    if prediction ==y:
+    if prediction == y:
         return 1
     else:
         return 0
