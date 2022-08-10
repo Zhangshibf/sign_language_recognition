@@ -60,8 +60,8 @@ class Dataset():
     def create_test_set(self):
         # signer 10 is used as test set
         idx_signer10 = [i for i, x in enumerate(self.signers) if x == 10]
-        self.test_x = [self.instances[idx] for idx in idx_signer10]
-        self.test_y = [self.labels[idx] for idx in idx_signer10]
+        test_x = [self.instances[idx] for idx in idx_signer10]
+        test_y = [self.labels[idx] for idx in idx_signer10]
         self.test_x, self.test_y = sklearn.utils.shuffle(test_x, test_y)
 
     def train_dev_split(self, dev):
