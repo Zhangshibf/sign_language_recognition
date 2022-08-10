@@ -31,7 +31,11 @@ class Dataset():
             frame_name_tuples = sorted(((v, k) for k, v in frame_names_dict.items()), reverse=False)
             frame_name_sorted = [i[1] for i in frame_name_tuples]
             print(frame_name_sorted)
-            frame_idxs = [i for i, x in enumerate(idxs) if x in frame_name_sorted]
+            frame_idxs=list()
+            for frame_name in frame_names_sorted:
+                print(frame_name)
+                frame_idxs.append(idxs.index(frame_name))
+#            frame_idxs = [i for i, x in enumerate(idxs) if x in frame_name_sorted]
             video_feature = list()
             for frame_idx in frame_idxs:
                 video_feature.append(features[frame_idx])
