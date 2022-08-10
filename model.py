@@ -155,10 +155,8 @@ def correct_or_not(prediction,y):
     print(prediction)
     print(y)
     prediction = torch.max(prediction,0)[1]
-    target = torch.max(y,0)[1]
     print(prediction)
-    print(target)
-    if prediction ==target:
+    if prediction ==y:
         return 1
     else:
         return 0
