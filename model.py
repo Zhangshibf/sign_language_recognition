@@ -182,7 +182,7 @@ def evaluate_model(model, x,y, loss_function):
         print(f"The averaged accuracy is {accuracy}")
 
 
-def cross_val(pathDataset,lr= 0.1):
+def cross_val(pathDataset,lr= 0.01):
     with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
     dataset.create_test_set()
