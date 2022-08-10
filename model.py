@@ -126,7 +126,7 @@ def train_model(model,x,y,optimizer,loss_function):
         optimizer.zero_grad()
         model_prediction = model(train_x)
         loss_per_batch = loss_function(model_prediction, train_y)
-        epoch_accuracy += calculate_accuracy_per_batch(model_prediction, train_y)
+        epoch_accuracy += correct_or_not(model_prediction, train_y)
         epoch_loss += loss_per_batch.item()
 
         loss_per_batch.backward()
@@ -137,19 +137,27 @@ def train_model(model,x,y,optimizer,loss_function):
     print(f"The averaged loss per instance is {loss}")
     print(f"The averaged accuracy per instance is {accuracy}")
 
-def calculate_accuracy_per_batch(prediction,y):
+#def calculate_accuracy_per_batch(prediction,y):
 
-    prediction = torch.max(prediction,1)[1]
-    print(prediction)
-    print(y)
-    correct = 0
+#    prediction = torch.max(prediction,1)[1]
+#    print(prediction)
+#    print(y)
+#    correct = 0
     #这儿肯定不对，我到现在才注意到
-    for i,j in zip(prediction,y):
-        if i==j:
-            correct+=1
-    accuracy_per_batch = correct/len(y)
+#    for i,j in zip(prediction,y):
+#        if i==j:
+#            correct+=1
+#    accuracy_per_batch = correct/len(y)
 
-    return accuracy_per_batch
+#    return accuracy_per_batch
+
+def correct_or_not(prediction,y):
+    prediction = torch.max(prediction,0)[1]
+    target = torch.max(y,0)[1]
+    if prediction ==target:
+        return 1
+    else:
+        return 0
 
 
 def evaluate_model(model, x,y, loss_function):
@@ -165,7 +173,7 @@ def evaluate_model(model, x,y, loss_function):
             dev_y = torch.reshape(dev_y, [1])
             model_prediction = model(dev_x)
             loss = loss_function(model_prediction, dev_y)
-            epoch_accuracy += calculate_accuracy_per_batch(model_prediction, dev_y)
+            epoch_accuracy += correct_or_not(model_prediction, dev_y)
             epoch_loss += loss.item()
 
         accuracy = epoch_accuracy / data_num
