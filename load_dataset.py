@@ -32,7 +32,7 @@ class Dataset():
             frame_name_sorted = [i[1] for i in frame_name_tuples]
             print(frame_name_sorted)
             frame_idxs=list()
-            for frame_name in frame_names_sorted:
+            for frame_name in frame_name_sorted:
                 print(frame_name)
                 frame_idxs.append(idxs.index(frame_name))
 #            frame_idxs = [i for i, x in enumerate(idxs) if x in frame_name_sorted]
