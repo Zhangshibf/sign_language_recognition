@@ -9,7 +9,7 @@ class Dataset():
         instances = list()
         labels = list()
         dataset_df = pd.read_csv(path_dataset,header=None)
-        idxs = list(dataset_df[0])
+        idxs = dataset_df[0].tolist()
         del dataset_df[0]
         features = dataset_df.values.tolist()
 
