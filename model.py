@@ -138,12 +138,14 @@ class sign_translator(nn.Module):
 
 
 
-def train_model(model,x,y,optimizer,loss_function):
+def train_model(model,x,y,optimizer,loss_function,shuffle =True):
     print("-------------------------------Training-------------------------------------------")
     model.train()
     epoch_loss = 0
     epoch_accuracy = 0
     data_num = len(x)
+    if shuffle == True:
+        x, y = sklearn.utils.shuffle(x, y)
     for train_x,train_y in zip(x,y):
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
