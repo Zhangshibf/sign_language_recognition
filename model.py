@@ -121,11 +121,7 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
-        print(len(train_x))
-        print(train_x[0])
-        train_x = train_x[10:]
-        print(len(train_x))
-        print(train_x[0])
+        train_x = train_x[5:]
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
