@@ -113,51 +113,45 @@ class sign_translator(nn.Module):
 
         return prediction
 
+def data_augmentation(train_x):
+    train_list = list()
+    train_x1 = train_x[1::2]
+    train_x2 = train_x[0::1]
+    train_x3 = train_x[3:]
+    train_x3 = train_x3[:-2]
+    train_list.append(train_x1)
+    train_list.append(train_x2)
+    train_list.append(train_x3)
 
-def train_model(model,x,y,optimizer,loss_function,extract):
+    return train_list
+
+def train_model(model,x,y,optimizer,loss_function):
     print("-------------------------------Training-------------------------------------------")
     model.train()
     epoch_loss = 0
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
-#        train_x = train_x[5:]
-#        train_x = train_x[3:]
-#        train_x = train_x[:-2]
-        if extract == "odd":
-            train_x = train_x[1::2]
-        elif extract =="even":
-            train_x = train_x[0::1]
-        train_x = torch.tensor(train_x)
-        train_y = torch.tensor(train_y)
-        train_y = torch.reshape(train_y, [1])
-        optimizer.zero_grad()
-        model_prediction = model(train_x)
-        loss_per_batch = loss_function(model_prediction, train_y)
-        epoch_accuracy += correct_or_not(model_prediction, train_y)
-        epoch_loss += loss_per_batch.item()
+        x_list = data_augmentation(train_x)
 
-        loss_per_batch.backward()
-        optimizer.step()
+        for x in x_list:
+            train_x = torch.tensor(x)
+            train_y = torch.tensor(train_y)
+            train_y = torch.reshape(train_y, [1])
+            optimizer.zero_grad()
+            model_prediction = model(train_x)
+            loss_per_batch = loss_function(model_prediction, train_y)
+            epoch_accuracy += correct_or_not(model_prediction, train_y)
+            epoch_loss += loss_per_batch.item()
 
-    accuracy = epoch_accuracy / data_num
-    loss = epoch_loss / data_num
+            loss_per_batch.backward()
+            optimizer.step()
+
+    accuracy = epoch_accuracy / (data_num*3)
+    loss = epoch_loss / (data_num*3)
     print(f"The averaged loss per instance is {loss}")
     print(f"The averaged accuracy per instance is {accuracy}")
 
-#def calculate_accuracy_per_batch(prediction,y):
-
-#    prediction = torch.max(prediction,1)[1]
-#    print(prediction)
-#    print(y)
-#    correct = 0
-    #这儿肯定不对，我到现在才注意到
-#    for i,j in zip(prediction,y):
-#        if i==j:
-#            correct+=1
-#    accuracy_per_batch = correct/len(y)
-
-#    return accuracy_per_batch
 
 def correct_or_not(prediction,y):
     prediction = torch.max(prediction,1)[1]
@@ -167,7 +161,7 @@ def correct_or_not(prediction,y):
         return 0
 
 
-def evaluate_model(model, x,y, loss_function,extract):
+def evaluate_model(model, x,y, loss_function):
     print("------------------------------------Evaluation---------------------------------------------")
     model.eval()
     epoch_loss = 0
@@ -175,24 +169,20 @@ def evaluate_model(model, x,y, loss_function,extract):
     data_num = len(x)
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
-#            dev_x = dev_x[5:]
-#            dev_x = dev_x[3:]
-#            dev_x = dev_x[:-2]
-            if extract =="odd":
-                dev_x = dev_x[1::2]
-            elif extract =="even":
-                dev_x = dev_x[0::1]
+            x_list = data_augmentation(dev_x)
 
-            dev_x = torch.tensor(dev_x)
-            dev_y = torch.tensor(dev_y)
-            dev_y = torch.reshape(dev_y, [1])
-            model_prediction = model(dev_x)
-            loss = loss_function(model_prediction, dev_y)
-            epoch_accuracy += correct_or_not(model_prediction, dev_y)
-            epoch_loss += loss.item()
+            for x in x_list:
 
-        accuracy = epoch_accuracy / data_num
-        loss = epoch_loss / data_num
+                dev_x = torch.tensor(x)
+                dev_y = torch.tensor(dev_y)
+                dev_y = torch.reshape(dev_y, [1])
+                model_prediction = model(dev_x)
+                loss = loss_function(model_prediction, dev_y)
+                epoch_accuracy += correct_or_not(model_prediction, dev_y)
+                epoch_loss += loss.item()
+
+        accuracy = epoch_accuracy / (data_num*3)
+        loss = epoch_loss / (data_num*3)
         print(f"The averaged loss is {loss}")
         print(f"The averaged accuracy is {accuracy}")
 
@@ -207,13 +197,10 @@ def cross_val(pathDataset,lr= 0.005):
         model = sign_translator(hidden_size=64, output_size=64)
         optimizer = optim.Adam(params=model.parameters(), lr=lr)
         dataset.train_dev_split(i) #i_th signer for dev set, 10th signer for test set, the rest for train set
-        train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function,extract="odd")
-        train_model(model, dataset.train_x, dataset.train_y, optimizer, loss_function, extract="even")
-        evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function,extract = "odd")
-        evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function,extract = "even")
+        train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function)
+        evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function)
     print("--------------Final Evaluation---------------")
-    evaluate_model(model, dataset.test_x,dataset.test_y, loss_function,extract="odd")
-    evaluate_model(model, dataset.test_x,dataset.test_y, loss_function,extract="even")
+    evaluate_model(model, dataset.test_x,dataset.test_y, loss_function)
 
 
 if __name__=="__main__":
