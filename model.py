@@ -95,7 +95,7 @@ class Dataset():
 
 class sign_translator(nn.Module):
 
-    def __init__(self, hidden_size,output_size, bidirectional=True, num_layers=2, dropout=0.2):
+    def __init__(self, hidden_size,output_size, bidirectional=True, num_layers=2, dropout=0.3):
 
         super(sign_translator, self).__init__()
         self.layer1 = nn.LSTM(48,hidden_size,bidirectional = bidirectional,num_layers=num_layers,dropout=dropout)      #The LSTM layer
@@ -122,8 +122,9 @@ def train_model(model,x,y,optimizer,loss_function):
     data_num = len(x)
     for train_x,train_y in zip(x,y):
 #        train_x = train_x[5:]
-        train_x = train_x[3:]
-        train_x = train_x[:-2]
+#        train_x = train_x[3:]
+#        train_x = train_x[:-2]
+        train_x = train_x[1::2]
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
@@ -172,8 +173,9 @@ def evaluate_model(model, x,y, loss_function):
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
 #            dev_x = dev_x[5:]
-            dev_x = dev_x[3:]
-            dev_x = dev_x[:-2]
+#            dev_x = dev_x[3:]
+#            dev_x = dev_x[:-2]
+            dev_x = dev_x[1::2]
             dev_x = torch.tensor(dev_x)
             dev_y = torch.tensor(dev_y)
             dev_y = torch.reshape(dev_y, [1])
