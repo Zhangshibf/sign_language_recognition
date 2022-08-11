@@ -192,7 +192,7 @@ def evaluate_model(model, x,y, loss_function):
         print(f"The averaged accuracy is {accuracy}")
 
 
-def train_model(pathDataset,lr= 0.005,epoch=20):
+def train_test(pathDataset,lr= 0.005,epoch=20):
     with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
     loss_function = nn.functional.cross_entropy
@@ -211,4 +211,4 @@ if __name__=="__main__":
     a = argparse.ArgumentParser()
     a.add_argument("--pathDataset", help="path to the pickled dataset object")
     args = a.parse_args()
-    train_model(args.pathDataset)
+    train_test(args.pathDataset)
