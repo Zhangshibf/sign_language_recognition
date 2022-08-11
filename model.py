@@ -121,7 +121,9 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
-        train_x = train_x[5:]
+#        train_x = train_x[5:]
+        train_x = train_x[3:]
+        train_x = train_x[:-2]
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
@@ -169,7 +171,9 @@ def evaluate_model(model, x,y, loss_function):
     data_num = len(x)
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
-            dev_x = dev_x[5:]
+#            dev_x = dev_x[5:]
+            dev_x = dev_x[3:]
+            dev_x = dev_x[:-2]
             dev_x = torch.tensor(dev_x)
             dev_y = torch.tensor(dev_y)
             dev_y = torch.reshape(dev_y, [1])
