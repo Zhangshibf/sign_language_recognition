@@ -92,7 +92,7 @@ class Dataset():
             augmented_x.append(x2)
             augmented_x.append(x3)
 
-        augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 2) for x in y)))#remember to change the number!
+        augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 3) for x in y)))#remember to change the number!
 
         return augmented_x,augmented_y
 
