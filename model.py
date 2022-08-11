@@ -194,7 +194,7 @@ def cross_val(pathDataset,lr= 0.005):
     loss_function = nn.functional.cross_entropy
     model = sign_translator(hidden_size=64, output_size=64)
       # i_th signer for dev set, 10th signer for test set, the rest for train set
-    for i in range(1,5):
+    for i in range(1,20):
         dataset.train_dev_split(2)
         print(f"--------------Epoch {i}---------------")
 
