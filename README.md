@@ -23,4 +23,4 @@ Please download the dataset [here](https://drive.google.com/file/d/1C7k_m2m4n5Vz
 `python load_data.py --pathH = path to the hand keypoints file --pathB = path to the body keypoints file --path_dataset = path to the file where you'd like to save the pickled dataset`
 
 ## Train the model
-python model.py --pathDataset=path to the file where the pickled dataset is saved`
+`python model.py --pathDataset=path to the file where the pickled dataset is saved`
