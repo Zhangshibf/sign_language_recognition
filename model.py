@@ -145,10 +145,10 @@ def train_model(model,x,y,device,optimizer,loss_function,shuffle =True):
     if shuffle == True:
         x, y = sklearn.utils.shuffle(x, y)
     for train_x,train_y in zip(x,y):
-        train_x, train_y = train_x.to(device), train_y.to(device)
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
+        train_x, train_y = train_x.to(device), train_y.to(device)
         optimizer.zero_grad()
         model_prediction = model(train_x)
         loss_per_batch = loss_function(model_prediction, train_y)
@@ -180,10 +180,11 @@ def evaluate_model(model, x,y, device,loss_function):
     data_num = len(x)
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
-            dev_x, dev_y = dev_x.to(device), dev_y.to(device)
             dev_x = torch.tensor(dev_x)
             dev_y = torch.tensor(dev_y)
             dev_y = torch.reshape(dev_y, [1])
+            dev_x, dev_y = dev_x.to(device), dev_y.to(device)
+
             model_prediction = model(dev_x)
             loss = loss_function(model_prediction, dev_y)
             epoch_accuracy += correct_or_not(model_prediction, dev_y)
