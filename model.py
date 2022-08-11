@@ -114,7 +114,7 @@ class sign_translator(nn.Module):
         return prediction
 
 
-def train_model(model,x,y,optimizer,loss_function):
+def train_model(model,x,y,optimizer,loss_function,extract):
     print("-------------------------------Training-------------------------------------------")
     model.train()
     epoch_loss = 0
@@ -124,7 +124,10 @@ def train_model(model,x,y,optimizer,loss_function):
 #        train_x = train_x[5:]
 #        train_x = train_x[3:]
 #        train_x = train_x[:-2]
-        train_x = train_x[1::2]
+        if extract == "odd":
+            train_x = train_x[1::2]
+        elif extract =="even":
+            train_x = train_x[0::1]
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
@@ -164,7 +167,7 @@ def correct_or_not(prediction,y):
         return 0
 
 
-def evaluate_model(model, x,y, loss_function):
+def evaluate_model(model, x,y, loss_function,extract):
     print("------------------------------------Evaluation---------------------------------------------")
     model.eval()
     epoch_loss = 0
@@ -175,7 +178,11 @@ def evaluate_model(model, x,y, loss_function):
 #            dev_x = dev_x[5:]
 #            dev_x = dev_x[3:]
 #            dev_x = dev_x[:-2]
-            dev_x = dev_x[1::2]
+            if extract =="odd":
+                dev_x = dev_x[1::2]
+            elif extract =="even":
+                dev_x = dev_x[0::1]
+
             dev_x = torch.tensor(dev_x)
             dev_y = torch.tensor(dev_y)
             dev_y = torch.reshape(dev_y, [1])
@@ -200,11 +207,13 @@ def cross_val(pathDataset,lr= 0.005):
         model = sign_translator(hidden_size=64, output_size=64)
         optimizer = optim.Adam(params=model.parameters(), lr=lr)
         dataset.train_dev_split(i) #i_th signer for dev set, 10th signer for test set, the rest for train set
-        train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function)
-        evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function)
-
+        train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function,extract="odd")
+        train_model(model, dataset.train_x, dataset.train_y, optimizer, loss_function, extract="even")
+        evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function,extract = "odd")
+        evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function,extract = "even")
     print("--------------Final Evaluation---------------")
-    evaluate_model(model, dataset.test_x,dataset.test_y, loss_function)
+    evaluate_model(model, dataset.test_x,dataset.test_y, loss_function,extract="odd")
+    evaluate_model(model, dataset.test_x,dataset.test_y, loss_function,extract="even")
 
 
 if __name__=="__main__":
