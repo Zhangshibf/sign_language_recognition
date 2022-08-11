@@ -200,6 +200,7 @@ def train_test(pathDataset,lr= 0.001,epoch=20):
     with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(device)
     loss_function = nn.functional.cross_entropy
     model = sign_translator(hidden_size=64, output_size=64)
     model.to(device)
