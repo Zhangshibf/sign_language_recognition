@@ -172,7 +172,7 @@ def evaluate_model(model, x,y, loss_function):
     data_num = len(x)
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
-            dev_x = dev_x[10:]
+            dev_x = dev_x[5:]
             dev_x = torch.tensor(dev_x)
             dev_y = torch.tensor(dev_y)
             dev_y = torch.reshape(dev_y, [1])
