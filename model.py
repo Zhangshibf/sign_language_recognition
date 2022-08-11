@@ -79,7 +79,7 @@ class Dataset():
         idx_signer_train = [i for i, x in enumerate(self.signers) if x not in [dev, 10]]
         train_x = [self.instances[idx] for idx in idx_signer_train]
         train_y = [self.labels[idx] for idx in idx_signer_train]
-#        train_x,train_y = self.data_augmentation(train_x,train_y)
+        train_x,train_y = self.data_augmentation(train_x,train_y)
         self.train_x, self.train_y= sklearn.utils.shuffle(train_x,train_y)
 
     def data_augmentation(self,x,y):
