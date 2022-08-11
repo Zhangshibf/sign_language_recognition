@@ -1,6 +1,7 @@
 import pickle5 as pickle
 import torch
 import torch.nn as nn
+import itertools
 from torch.nn import functional
 import torch.optim as optim
 import argparse
@@ -57,24 +58,46 @@ class Dataset():
 
         return sample
 
-    def create_test_set(self):
-        # signer 10 is used as test set
-        idx_signer10 = [i for i, x in enumerate(self.signers) if x == 10]
-        test_x = [self.instances[idx] for idx in idx_signer10]
-        test_y = [self.labels[idx] for idx in idx_signer10]
-        self.test_x, self.test_y = sklearn.utils.shuffle(test_x, test_y)
+#    def create_test_set(self):
+#        # signer 10 is used as test set
+#        idx_signer10 = [i for i, x in enumerate(self.signers) if x == 10]
+#        test_x = [self.instances[idx] for idx in idx_signer10]
+#        test_y = [self.labels[idx] for idx in idx_signer10]
+#        self.test_x, self.test_y = sklearn.utils.shuffle(test_x, test_y)
 
-    def train_dev_split(self, dev):
+    def train_dev_test_split(self, dev=9,test=10):
         # dev is the ID of the signer to be used as dev set.
         idx_signer_dev = [i for i, x in enumerate(self.signers) if x == dev]
         dev_x = [self.instances[idx] for idx in idx_signer_dev]
         dev_y = [self.labels[idx] for idx in idx_signer_dev]
+        dev_x,dev_y = self.data_augmentation(dev_x,dev_y)
         self.dev_x,self.dev_y = sklearn.utils.shuffle(dev_x,dev_y)
+
+        idx_signer_test = [i for i, x in enumerate(self.signers) if x == test]
+        test_x = [self.instances[idx] for idx in idx_signer_test]
+        test_y = [self.labels[idx] for idx in idx_signer_test]
+        test_x,test_y = self.data_augmentation(test_x,test_y)
+        self.test_x,self.test_y = sklearn.utils.shuffle(test_x,test_y)
 
         idx_signer_train = [i for i, x in enumerate(self.signers) if x not in [dev, 10]]
         train_x = [self.instances[idx] for idx in idx_signer_train]
         train_y = [self.labels[idx] for idx in idx_signer_train]
+        train_x,train_y = self.data_augmentation(train_x,train_y)
         self.train_x, self.train_y= sklearn.utils.shuffle(train_x,train_y)
+
+    def data_augmentation(self,x,y):
+        augmented_x = list()
+        for x in x:
+            x1 = x[1::2]
+            x2 = x[0::1]
+            x3 = x[3:][:-2]
+            augmented_x.append(x1)
+            augmented_x.append(x2)
+            augmented_x.append(x3)
+
+        augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 3) for x in y)))
+
+        return augmented_x,augmented_y
 
     def create_targets(self, idx):
         y = list()
@@ -113,17 +136,7 @@ class sign_translator(nn.Module):
 
         return prediction
 
-def data_augmentation(train_x):
-    train_list = list()
-    train_x1 = train_x[1::2]
-    train_x2 = train_x[0::1]
-    train_x3 = train_x[3:]
-    train_x3 = train_x3[:-2]
-    train_list.append(train_x1)
-    train_list.append(train_x2)
-    train_list.append(train_x3)
 
-    return train_list
 
 def train_model(model,x,y,optimizer,loss_function):
     print("-------------------------------Training-------------------------------------------")
@@ -132,23 +145,19 @@ def train_model(model,x,y,optimizer,loss_function):
     epoch_accuracy = 0
     data_num = len(x)
     for train_x,train_y in zip(x,y):
-        x_list = data_augmentation(train_x)
-        train_y = torch.tensor(train_y)
-        train_y = torch.reshape(train_y, [1])
-        for x in x_list:
-            train_x = torch.tensor(x)
+        train_x = torch.tensor(train_x)
 
-            optimizer.zero_grad()
-            model_prediction = model(train_x)
-            loss_per_batch = loss_function(model_prediction, train_y)
-            epoch_accuracy += correct_or_not(model_prediction, train_y)
-            epoch_loss += loss_per_batch.item()
+        optimizer.zero_grad()
+        model_prediction = model(train_x)
+        loss_per_batch = loss_function(model_prediction, train_y)
+        epoch_accuracy += correct_or_not(model_prediction, train_y)
+        epoch_loss += loss_per_batch.item()
 
-            loss_per_batch.backward()
-            optimizer.step()
+        loss_per_batch.backward()
+        optimizer.step()
 
-    accuracy = epoch_accuracy / (data_num*3)
-    loss = epoch_loss / (data_num*3)
+    accuracy = epoch_accuracy / data_num
+    loss = epoch_loss / data_num
     print(f"The averaged loss per instance is {loss}")
     print(f"The averaged accuracy per instance is {accuracy}")
 
@@ -169,45 +178,38 @@ def evaluate_model(model, x,y, loss_function):
     data_num = len(x)
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
-            x_list = data_augmentation(dev_x)
-            dev_y = torch.tensor(dev_y)
-            dev_y = torch.reshape(dev_y, [1])
-            for x in x_list:
 
-                dev_x = torch.tensor(x)
+            dev_x = torch.tensor(dev_x)
 
-                model_prediction = model(dev_x)
-                loss = loss_function(model_prediction, dev_y)
-                epoch_accuracy += correct_or_not(model_prediction, dev_y)
-                epoch_loss += loss.item()
+            model_prediction = model(dev_x)
+            loss = loss_function(model_prediction, dev_y)
+            epoch_accuracy += correct_or_not(model_prediction, dev_y)
+            epoch_loss += loss.item()
 
-        accuracy = epoch_accuracy / (data_num*3)
-        loss = epoch_loss / (data_num*3)
+        accuracy = epoch_accuracy /data_num
+        loss = epoch_loss /data_num
         print(f"The averaged loss is {loss}")
         print(f"The averaged accuracy is {accuracy}")
 
 
-def cross_val(pathDataset,lr= 0.005):
+def train_model(pathDataset,lr= 0.005,epoch=20):
     with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
     dataset.create_test_set()
     loss_function = nn.functional.cross_entropy
     model = sign_translator(hidden_size=64, output_size=64)
-      # i_th signer for dev set, 10th signer for test set, the rest for train set
-    for i in range(1,20):
-        dataset.train_dev_split(2)
+    dataset.train_dev_test_split()
+    for i in range(1,epoch+1):
         print(f"--------------Epoch {i}---------------")
-
         optimizer = optim.Adam(params=model.parameters(), lr=lr)
-
         train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function)
         evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function)
-    print("--------------Final Evaluation---------------")
-    evaluate_model(model, dataset.test_x,dataset.test_y, loss_function)
+        print("--------------Evaluate on Test---------------")
+        evaluate_model(model, dataset.test_x,dataset.test_y, loss_function)
 
 
 if __name__=="__main__":
     a = argparse.ArgumentParser()
     a.add_argument("--pathDataset", help="path to the pickled dataset object")
     args = a.parse_args()
-    cross_val(args.pathDataset)
+    train_model(args.pathDataset)
