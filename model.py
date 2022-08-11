@@ -70,13 +70,11 @@ class Dataset():
         idx_signer_dev = [i for i, x in enumerate(self.signers) if x == dev]
         dev_x = [self.instances[idx] for idx in idx_signer_dev]
         dev_y = [self.labels[idx] for idx in idx_signer_dev]
-        dev_x,dev_y = self.data_augmentation(dev_x,dev_y)
         self.dev_x,self.dev_y = sklearn.utils.shuffle(dev_x,dev_y)
 
         idx_signer_test = [i for i, x in enumerate(self.signers) if x == test]
         test_x = [self.instances[idx] for idx in idx_signer_test]
         test_y = [self.labels[idx] for idx in idx_signer_test]
-        test_x,test_y = self.data_augmentation(test_x,test_y)
         self.test_x,self.test_y = sklearn.utils.shuffle(test_x,test_y)
 
         idx_signer_train = [i for i, x in enumerate(self.signers) if x not in [dev, 10]]
@@ -138,7 +136,7 @@ class sign_translator(nn.Module):
 
 
 
-def train_model(model,x,y,optimizer,loss_function,shuffle =True):
+def train_model(model,x,y,device,optimizer,loss_function,shuffle =True):
     print("-------------------------------Training-------------------------------------------")
     model.train()
     epoch_loss = 0
@@ -147,6 +145,7 @@ def train_model(model,x,y,optimizer,loss_function,shuffle =True):
     if shuffle == True:
         x, y = sklearn.utils.shuffle(x, y)
     for train_x,train_y in zip(x,y):
+        train_x, train_y = train_x.to(device), train_y.to(device)
         train_x = torch.tensor(train_x)
         train_y = torch.tensor(train_y)
         train_y = torch.reshape(train_y, [1])
@@ -173,7 +172,7 @@ def correct_or_not(prediction,y):
         return 0
 
 
-def evaluate_model(model, x,y, loss_function):
+def evaluate_model(model, x,y, device,loss_function):
     print("------------------------------------Evaluation---------------------------------------------")
     model.eval()
     epoch_loss = 0
@@ -181,6 +180,7 @@ def evaluate_model(model, x,y, loss_function):
     data_num = len(x)
     with torch.no_grad():
         for dev_x,dev_y in zip(x,y):
+            dev_x, dev_y = dev_x.to(device), dev_y.to(device)
             dev_x = torch.tensor(dev_x)
             dev_y = torch.tensor(dev_y)
             dev_y = torch.reshape(dev_y, [1])
@@ -195,19 +195,21 @@ def evaluate_model(model, x,y, loss_function):
         print(f"The averaged accuracy is {accuracy}")
 
 
-def train_test(pathDataset,lr= 0.005,epoch=20):
+def train_test(pathDataset,lr= 0.001,epoch=20):
     with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     loss_function = nn.functional.cross_entropy
     model = sign_translator(hidden_size=64, output_size=64)
+    model.to(device)
     dataset.train_dev_test_split()
     for i in range(1,epoch+1):
         print(f"--------------Epoch {i}---------------")
         optimizer = optim.Adam(params=model.parameters(), lr=lr)
-        train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function)
-        evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function)
+        train_model(model, dataset.train_x,dataset.train_y,device, optimizer, loss_function)
+        evaluate_model(model, dataset.dev_x,dataset.dev_y,device,loss_function)
         print("--------------Evaluate on Test---------------")
-        evaluate_model(model, dataset.test_x,dataset.test_y, loss_function)
+        evaluate_model(model, dataset.test_x,dataset.test_y,device, loss_function)
 
 
 if __name__=="__main__":
