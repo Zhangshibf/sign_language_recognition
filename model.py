@@ -195,7 +195,6 @@ def evaluate_model(model, x,y, loss_function):
 def train_model(pathDataset,lr= 0.005,epoch=20):
     with open(pathDataset, 'rb') as inp:
         dataset = pickle.load(inp)
-    dataset.create_test_set()
     loss_function = nn.functional.cross_entropy
     model = sign_translator(hidden_size=64, output_size=64)
     dataset.train_dev_test_split()
