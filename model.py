@@ -146,7 +146,7 @@ def train_model(model,x,y,optimizer,loss_function):
     data_num = len(x)
     for train_x,train_y in zip(x,y):
         train_x = torch.tensor(train_x)
-
+        train_y = torch.tensor(train_y)
         optimizer.zero_grad()
         model_prediction = model(train_x)
         loss_per_batch = loss_function(model_prediction, train_y)
@@ -180,6 +180,7 @@ def evaluate_model(model, x,y, loss_function):
         for dev_x,dev_y in zip(x,y):
 
             dev_x = torch.tensor(dev_x)
+            dev_y = torch.tensor(dev_y)
 
             model_prediction = model(dev_x)
             loss = loss_function(model_prediction, dev_y)
