@@ -2,7 +2,6 @@ import pickle5 as pickle
 import torch
 import torch.nn as nn
 import itertools
-from torch.nn import functional
 import torch.optim as optim
 import argparse
 from collections import Counter
@@ -88,12 +87,12 @@ class Dataset():
         for x in x:
             x1 = x[1::2]
             x2 = x[0::1]
-            x3 = x[3:][:-2]
+#            x3 = x[3:][:-2]
             augmented_x.append(x1)
             augmented_x.append(x2)
-            augmented_x.append(x3)
+ #           augmented_x.append(x3)
 
-        augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 3) for x in y)))
+        augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 2) for x in y)))#remember to change the number!
 
         return augmented_x,augmented_y
 
