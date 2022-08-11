@@ -91,8 +91,9 @@ class Dataset():
             augmented_x.append(x1)
             augmented_x.append(x2)
             augmented_x.append(x3)
+            augmented_x.append(x)
 
-        augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 3) for x in y)))#remember to change the number!
+        augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 4) for x in y)))#remember to change the number!
 
         return augmented_x,augmented_y
 
@@ -200,7 +201,7 @@ def train_test(pathDataset,lr= 0.001,epoch=20):
         dataset = pickle.load(inp)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     loss_function = nn.functional.cross_entropy
-    model = sign_translator(hidden_size=128, output_size=64)
+    model = sign_translator(hidden_size=64, output_size=64)
     model.to(device)
     dataset.train_dev_test_split()
     for i in range(1,epoch+1):
