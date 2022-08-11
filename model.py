@@ -87,10 +87,10 @@ class Dataset():
         for x in x:
             x1 = x[1::2]
             x2 = x[0::1]
-#            x3 = x[3:][:-2]
+            x3 = x[3:][:-2]
             augmented_x.append(x1)
             augmented_x.append(x2)
- #           augmented_x.append(x3)
+            augmented_x.append(x3)
 
         augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 2) for x in y)))#remember to change the number!
 
