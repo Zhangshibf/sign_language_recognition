@@ -192,11 +192,13 @@ def cross_val(pathDataset,lr= 0.005):
         dataset = pickle.load(inp)
     dataset.create_test_set()
     loss_function = nn.functional.cross_entropy
-    for i in range(1,10):
+    model = sign_translator(hidden_size=64, output_size=64)
+    dataset.train_dev_split(2)  # i_th signer for dev set, 10th signer for test set, the rest for train set
+    for i in range(1,5):
         print(f"--------------Epoch {i}---------------")
-        model = sign_translator(hidden_size=64, output_size=64)
+
         optimizer = optim.Adam(params=model.parameters(), lr=lr)
-        dataset.train_dev_split(i) #i_th signer for dev set, 10th signer for test set, the rest for train set
+
         train_model(model, dataset.train_x,dataset.train_y, optimizer, loss_function)
         evaluate_model(model, dataset.dev_x,dataset.dev_y,loss_function)
     print("--------------Final Evaluation---------------")
