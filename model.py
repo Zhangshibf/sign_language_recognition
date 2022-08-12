@@ -13,28 +13,30 @@ class Dataset():
     def __init__(self, path_dataset):
         instances = list()
         labels = list()
-        f = open(path_dataset)
-        data = f.read()
-        rows = data.split("\n")
-        idxs = list()
-        features = list()
-        for row in rows:
-            row_data = row.split(",")
-            idxs.append(row_data[0])
-            features.append(row_data[1:])
+        dataset_df = pd.read_csv(path_dataset,header=None)
+        idxs = dataset_df[0].tolist()
+        del dataset_df[0]
+        features = dataset_df.values.tolist()
+
 
         # each row corresponds to a frame. Now we need to group all frame data of one video together. Each video should have only one label
-        # 047_001_001_18.jpg
         videos = list(Counter([i[:11] for i in idxs]))
         videos.sort()
         videos = videos[1:]
 
         for video_name in videos:
             labels.append(video_name)
-            # find all frames of the same video, group them together. That's an instance
+            # find all frames of the same video, group them together
             frame_names = [i for i in idxs if video_name in i]
-            frame_names.sort()  # to make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
-            frame_idxs = [i for i, x in enumerate(idxs) if x in frame_names]
+            # make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
+            frame_names_dict = dict()
+            for item in frame_names:
+                frame_names_dict[item] = int(item.split("_")[-1].rstrip(".jpg"))
+            frame_name_tuples = sorted(((v, k) for k, v in frame_names_dict.items()), reverse=False)
+            frame_name_sorted = [i[1] for i in frame_name_tuples]
+            frame_idxs=list()
+            for frame_name in frame_name_sorted:
+                frame_idxs.append(idxs.index(frame_name))
             video_feature = list()
             for frame_idx in frame_idxs:
                 video_feature.append(features[frame_idx])
@@ -56,13 +58,6 @@ class Dataset():
         sample = {"Data": instance, "Class": label}
 
         return sample
-
-#    def create_test_set(self):
-#        # signer 10 is used as test set
-#        idx_signer10 = [i for i, x in enumerate(self.signers) if x == 10]
-#        test_x = [self.instances[idx] for idx in idx_signer10]
-#        test_y = [self.labels[idx] for idx in idx_signer10]
-#        self.test_x, self.test_y = sklearn.utils.shuffle(test_x, test_y)
 
     def train_dev_test_split(self, dev=9,test=10):
         # dev is the ID of the signer to be used as dev set.
