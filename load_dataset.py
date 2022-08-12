@@ -15,27 +15,23 @@ class Dataset():
 
 
         # each row corresponds to a frame. Now we need to group all frame data of one video together. Each video should have only one label
-        # 047_001_001_18.jpg
         videos = list(Counter([i[:11] for i in idxs]))
         videos.sort()
         videos = videos[1:]
 
         for video_name in videos:
             labels.append(video_name)
-            # find all frames of the same video, group them together. That's an instance
+            # find all frames of the same video, group them together
             frame_names = [i for i in idxs if video_name in i]
-#            frame_names.sort()  # to make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
+            # make sure an instance is composed of [frame1,frame2,frame3...] in stead of random order
             frame_names_dict = dict()
             for item in frame_names:
                 frame_names_dict[item] = int(item.split("_")[-1].rstrip(".jpg"))
             frame_name_tuples = sorted(((v, k) for k, v in frame_names_dict.items()), reverse=False)
             frame_name_sorted = [i[1] for i in frame_name_tuples]
-            print(frame_name_sorted)
             frame_idxs=list()
             for frame_name in frame_name_sorted:
-                print(frame_name)
                 frame_idxs.append(idxs.index(frame_name))
-#            frame_idxs = [i for i, x in enumerate(idxs) if x in frame_name_sorted]
             video_feature = list()
             for frame_idx in frame_idxs:
                 video_feature.append(features[frame_idx])
@@ -58,22 +54,38 @@ class Dataset():
 
         return sample
 
-    def create_test_set(self):
-        # signer 10 is used as test set
-        idx_signer10 = [i for i, x in enumerate(self.signers) if x == 10]
-        self.test_x = [self.instances[idx] for idx in idx_signer10]
-        self.test_y = [self.labels[idx] for idx in idx_signer10]
-
-    def train_dev_split(self, dev):
+    def train_dev_test_split(self, dev=9,test=10):
         # dev is the ID of the signer to be used as dev set.
         idx_signer_dev = [i for i, x in enumerate(self.signers) if x == dev]
-        self.dev_x = [self.instances[idx] for idx in idx_signer_dev]
-        self.dev_y = [self.labels[idx] for idx in idx_signer_dev]
+        dev_x = [self.instances[idx] for idx in idx_signer_dev]
+        dev_y = [self.labels[idx] for idx in idx_signer_dev]
+        self.dev_x,self.dev_y = sklearn.utils.shuffle(dev_x,dev_y)
+
+        idx_signer_test = [i for i, x in enumerate(self.signers) if x == test]
+        test_x = [self.instances[idx] for idx in idx_signer_test]
+        test_y = [self.labels[idx] for idx in idx_signer_test]
+        self.test_x,self.test_y = sklearn.utils.shuffle(test_x,test_y)
 
         idx_signer_train = [i for i, x in enumerate(self.signers) if x not in [dev, 10]]
-        self.train_x = [self.instances[idx] for idx in idx_signer_train]
-        self.train_y = [self.labels[idx] for idx in idx_signer_train]
-        #这里得加个shuffle
+        train_x = [self.instances[idx] for idx in idx_signer_train]
+        train_y = [self.labels[idx] for idx in idx_signer_train]
+        train_x,train_y = self.data_augmentation(train_x,train_y)
+        self.train_x, self.train_y= sklearn.utils.shuffle(train_x,train_y)
+
+    def data_augmentation(self,x,y):
+        augmented_x = list()
+        for x in x:
+            x1 = x[1::2]
+            x2 = x[0::1]
+            x3 = x[3:][:-2]
+            augmented_x.append(x1)
+            augmented_x.append(x2)
+            augmented_x.append(x3)
+            augmented_x.append(x)
+
+        augmented_y =list((itertools.chain.from_iterable(itertools.repeat(x, 4) for x in y)))#remember to change the number!
+
+        return augmented_x,augmented_y
 
     def create_targets(self, idx):
         y = list()
